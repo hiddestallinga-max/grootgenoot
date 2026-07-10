@@ -18,28 +18,34 @@ export default function GrootSupport() {
       </p>
 
       <div className="mt-10 grid gap-6">
-        <div className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm">
+        <Link
+          href="/groot-support/hulp-zoeken"
+          className="group block rounded-2xl border border-black/5 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+        >
           <h2 className="text-2xl font-bold text-ink">Ik zoek ondersteuning</h2>
           <p className="mt-2 text-lg leading-relaxed text-muted">
             Laat je gegevens achter en we nemen contact op om te kijken hoe we
             kunnen helpen.
           </p>
-          <p className="mt-4 text-base font-semibold text-support">
-            Aanmeldformulier — in aanbouw
-          </p>
-        </div>
+          <span className="mt-5 inline-flex items-center gap-2 text-lg font-semibold text-support">
+            Aanmelden <span aria-hidden="true">→</span>
+          </span>
+        </Link>
 
-        <div className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm">
+        <Link
+          href="/groot-support/helpen"
+          className="group block rounded-2xl border border-black/5 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+        >
           <h2 className="text-2xl font-bold text-ink">
             Ik wil iemand ondersteunen
           </h2>
           <p className="mt-2 text-lg leading-relaxed text-muted">
             Word grootgenoot en help een oudere in de buurt.
           </p>
-          <p className="mt-4 text-base font-semibold text-support">
-            Aanmeldformulier — in aanbouw
-          </p>
-        </div>
+          <span className="mt-5 inline-flex items-center gap-2 text-lg font-semibold text-support">
+            Aanmelden <span aria-hidden="true">→</span>
+          </span>
+        </Link>
       </div>
     </main>
   );

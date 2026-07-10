@@ -16,18 +16,39 @@ npm run dev
 
 Open http://localhost:3000
 
-## Omgeving instellen (Supabase)
+## Omgeving instellen (Supabase + admin)
 
 1. Maak een gratis project op https://supabase.com (kies een **EU-regio**).
 2. Ga naar **SQL Editor** en voer de inhoud van `supabase/schema.sql` uit.
-3. Ga naar **Project Settings > API** en kopieer de URL en keys.
+3. Ga naar **Project Settings > API** en kopieer de URL, de anon key en de service role key.
 4. Kopieer `.env.example` naar `.env.local` en vul de waarden in:
 
 ```bash
 cp .env.example .env.local
 ```
 
+5. Vul ook een `ADMIN_PASSWORD` in (waarmee jij op `/admin` inlogt) en een
+   `ADMIN_SESSION_SECRET`. Genereer die laatste met:
+
+```bash
+openssl rand -hex 32
+```
+
 `.env.local` staat in `.gitignore` en komt nooit in GitHub.
+
+## Wat er werkt (v1 — persoonlijke koppeling)
+
+- Landingspagina met 4 tegels; **Groot Support** actief.
+- Twee aanmeldformulieren: `/groot-support/hulp-zoeken` en `/groot-support/helpen`.
+  Aanmeldingen worden opgeslagen in Supabase.
+- Beveiligde regiekamer op `/admin` (wachtwoord = `ADMIN_PASSWORD`): overzicht
+  van alle aanmeldingen, statuspipeline (nieuw → gebeld → intake → match
+  voorgesteld → gekoppeld → loopt), filter op rol/status/buurt, interne
+  notities en CSV-export.
+- Privacyverklaring op `/privacy`.
+
+De koppeling zelf is mensenwerk: jij belt, doet de intake en matcht handmatig
+vanuit de regiekamer.
 
 ## Naar GitHub
 
@@ -45,7 +66,9 @@ git push -u origin main
 ## Deployen (Vercel)
 
 1. Log in op https://vercel.com met GitHub en importeer de repo.
-2. Zet dezelfde env-variabelen uit `.env.local` in Vercel (Project Settings > Environment Variables).
+2. Zet **alle** env-variabelen uit `.env.local` in Vercel (Project Settings >
+   Environment Variables): de drie Supabase-waarden, `ADMIN_PASSWORD` en
+   `ADMIN_SESSION_SECRET`. Zonder deze werkt het opslaan en de regiekamer niet.
 3. Deploy. Elke `git push` naar `main` deployt daarna automatisch.
 
 ## Domein koppelen (grootgenoot.nl bij mijndomein.nl)
