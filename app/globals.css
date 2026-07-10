@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+/* GrootGenoot huisstijl — warm, rustig, hoog contrast, grote leesbaarheid */
+@theme {
+  --color-cream: #fbf7f0;
+  --color-ink: #2b2622;
+  --color-muted: #6b6258;
+
+  --color-samen: #2f6b4f;   /* Groot Samen  - warm groen */
+  --color-support: #c4622d; /* Groot Support - terracotta (kern) */
+  --color-sport: #2c6e8f;   /* Groot Sport  - rustig blauw */
+  --color-smaakt: #c98a1e;  /* Groot Smaakt - amber */
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+html {
+  font-size: 18px; /* iets groter basisformaat voor leesbaarheid */
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+}
+
+/* Duidelijk zichtbare focus voor toetsenbordnavigatie (toegankelijkheid) */
+:focus-visible {
+  outline: 3px solid var(--color-support);
+  outline-offset: 2px;
+}
