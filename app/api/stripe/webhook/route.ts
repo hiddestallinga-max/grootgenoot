@@ -9,18 +9,29 @@ import { stuurMail, eigenaarEmail } from "@/lib/email";
 // (Developers > Webhooks) en zet de signing secret in STRIPE_WEBHOOK_SECRET.
 
 export async function POST(request: Request) {
-  const geheim = process.env.STRIPE_WEBHOOK_SECRET;
+  // Twee mogelijke secrets: één voor events van je eigen account (betalingen,
+  // machtigingen) en één voor events van gekoppelde accounts (onboarding).
+  const geheimen = [
+    process.env.STRIPE_WEBHOOK_SECRET,
+    process.env.STRIPE_WEBHOOK_SECRET_CONNECT,
+  ].filter((g): g is string => Boolean(g));
   const handtekening = request.headers.get("stripe-signature");
-  if (!geheim || !handtekening) {
+  if (geheimen.length === 0 || !handtekening) {
     return NextResponse.json({ error: "Webhook niet geconfigureerd" }, { status: 400 });
   }
 
-  let event: Stripe.Event;
-  try {
-    const rauw = await request.text();
-    event = await stripe().webhooks.constructEventAsync(rauw, handtekening, geheim);
-  } catch (err) {
-    console.error("Webhook-handtekening ongeldig:", err);
+  const rauw = await request.text();
+  let event: Stripe.Event | null = null;
+  for (const geheim of geheimen) {
+    try {
+      event = await stripe().webhooks.constructEventAsync(rauw, handtekening, geheim);
+      break;
+    } catch {
+      // probeer het volgende secret
+    }
+  }
+  if (!event) {
+    console.error("Webhook-handtekening ongeldig");
     return NextResponse.json({ error: "Ongeldige handtekening" }, { status: 400 });
   }
 
