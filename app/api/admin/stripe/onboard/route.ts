@@ -81,8 +81,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Stripe onboarding-fout:", err);
+    const boodschap = err instanceof Error ? err.message : "Onbekende fout";
     return NextResponse.json(
-      { error: "Stripe-onboarding aanmaken mislukt. Check de server-logs." },
+      { error: `Stripe-onboarding mislukt: ${boodschap}` },
       { status: 500 },
     );
   }

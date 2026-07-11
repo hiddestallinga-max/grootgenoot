@@ -175,8 +175,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, totaal_cent: totaalCent });
   } catch (err) {
     console.error("Incasso-fout:", err);
+    const boodschap = err instanceof Error ? err.message : "Onbekende fout";
     return NextResponse.json(
-      { error: "Incasso starten mislukt. Check de server-logs." },
+      { error: `Incasso mislukt: ${boodschap}` },
       { status: 500 },
     );
   }
