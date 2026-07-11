@@ -14,6 +14,9 @@ export default function SiteHeader() {
           <Link href="/over" className="text-ink transition hover:text-support">
             Over
           </Link>
+          <Link href="/tarieven" className="text-ink transition hover:text-support">
+            Tarieven
+          </Link>
           <Link href="/contact" className="text-ink transition hover:text-support">
             Contact
           </Link>

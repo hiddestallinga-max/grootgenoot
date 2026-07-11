@@ -26,6 +26,10 @@ export default function SiteFooter() {
                 Over Grootgenoot
               </Link>{" "}
               ·{" "}
+              <Link href="/tarieven" className="underline hover:text-white">
+                Tarieven
+              </Link>{" "}
+              ·{" "}
               <Link href="/contact" className="underline hover:text-white">
                 Contact
               </Link>{" "}
