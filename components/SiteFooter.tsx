@@ -22,6 +22,10 @@ export default function SiteFooter() {
               </a>
             </p>
             <p className="mt-1">
+              <Link href="/over" className="underline hover:text-white">
+                Over Grootgenoot
+              </Link>{" "}
+              ·{" "}
               <Link href="/contact" className="underline hover:text-white">
                 Contact
               </Link>{" "}

@@ -11,6 +11,9 @@ export default function SiteHeader() {
           <Link href="/groot-support" className="text-ink transition hover:text-support">
             Hulp
           </Link>
+          <Link href="/over" className="text-ink transition hover:text-support">
+            Over
+          </Link>
           <Link href="/contact" className="text-ink transition hover:text-support">
             Contact
           </Link>

@@ -88,7 +88,7 @@ export default function Home() {
         </h1>
         <p className="mt-5 text-xl leading-relaxed text-muted">
           Iemand uit de buurt die je helpt én gezelschap houdt. Thuis en op
-          pad, al is het maar een kwartiertje.
+          pad.
         </p>
       </header>
 

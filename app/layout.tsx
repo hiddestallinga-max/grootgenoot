@@ -6,7 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 export const metadata: Metadata = {
   title: "Grootgenoot | Hulp en gezelschap uit de buurt",
   description:
-    "Hulp en gezelschap voor ouderen, thuis en buitenshuis, van mensen uit de buurt. Onze aanpak voor vergrijzing, ook voor een kwartiertje.",
+    "Hulp en gezelschap voor ouderen, thuis en buitenshuis, van mensen uit de buurt. Onze aanpak voor vergrijzing.",
 };
 
 export default function RootLayout({
