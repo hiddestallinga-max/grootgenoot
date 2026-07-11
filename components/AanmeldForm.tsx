@@ -51,6 +51,7 @@ export default function AanmeldForm({ rol }: Props) {
         rol === "grootgenoot" ? String(form.get("beschikbaarheid") ?? "") : "",
       toelichting: String(form.get("toelichting") ?? ""),
       toestemming: form.get("toestemming") === "on",
+      website: String(form.get("website") ?? ""), // honeypot, hoort leeg te zijn
     };
 
     try {
@@ -90,7 +91,12 @@ export default function AanmeldForm({ rol }: Props) {
   const labelClass = "block text-lg font-semibold text-ink";
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6" noValidate>
+    <form onSubmit={onSubmit} className="space-y-6">
+      {/* Honeypot tegen spam-bots: onzichtbaar voor mensen. Laat dit leeg. */}
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
           <label htmlFor="voornaam" className={labelClass}>

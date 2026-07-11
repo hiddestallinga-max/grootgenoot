@@ -51,3 +51,9 @@ create index if not exists aanmeldingen_rol_created_idx
   on public.aanmeldingen (rol, created_at desc);
 create index if not exists aanmeldingen_status_idx
   on public.aanmeldingen (status);
+
+-- Voorkom dubbele aanmeldingen: één aanmelding per e-mailadres per rol.
+-- Let op: als er al dubbele rijen in de tabel staan, faalt het aanmaken van
+-- deze index — verwijder dan eerst de duplicaten.
+create unique index if not exists aanmeldingen_email_rol_uniek
+  on public.aanmeldingen (lower(email), rol);

@@ -28,6 +28,7 @@ export default function AdminDashboard({
   const [zoek, setZoek] = useState("");
   const [rolFilter, setRolFilter] = useState<"alle" | "hulpvrager" | "grootgenoot">("alle");
   const [statusFilter, setStatusFilter] = useState<"alle" | Status>("alle");
+  const [opslaanFout, setOpslaanFout] = useState<string | null>(null);
 
   const gefilterd = useMemo(() => {
     const q = zoek.trim().toLowerCase();
@@ -41,12 +42,23 @@ export default function AdminDashboard({
   }, [items, zoek, rolFilter, statusFilter]);
 
   async function updateVeld(id: string, veld: Partial<Pick<Aanmelding, "status" | "notitie">>) {
+    const vorige = items;
     setItems((prev) => prev.map((a) => (a.id === id ? { ...a, ...veld } : a)));
-    await fetch("/api/admin/status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...veld }),
-    });
+    try {
+      const res = await fetch("/api/admin/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...veld }),
+      });
+      if (!res.ok) throw new Error();
+      setOpslaanFout(null);
+    } catch {
+      // Terugdraaien: de wijziging is niet opgeslagen.
+      setItems(vorige);
+      setOpslaanFout(
+        "Opslaan mislukt. Mogelijk is je sessie verlopen — herlaad de pagina en probeer het opnieuw.",
+      );
+    }
   }
 
   async function uitloggen() {
@@ -61,13 +73,19 @@ export default function AdminDashboard({
       "categorieen", "urgentie", "beschikbaarheid", "toelichting", "status",
       "notitie", "created_at",
     ];
-    const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    // Escapen voor CSV, incl. bescherming tegen formule-injectie in Excel.
+    const esc = (v: unknown) => {
+      let s = String(v ?? "");
+      if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+      return `"${s.replace(/"/g, '""')}"`;
+    };
     const rijen = gefilterd.map((a) =>
       [a.rol, a.voornaam, a.achternaam, a.email, a.telefoon, a.postcode,
        a.categorieen.join("; "), a.urgentie, a.beschikbaarheid, a.toelichting,
        a.status, a.notitie, a.created_at].map(esc).join(","),
     );
-    const csv = [kol.join(","), ...rijen].join("\n");
+    // \ufeff = BOM, zodat Excel de UTF-8 (é, ë, …) goed leest.
+    const csv = "\ufeff" + [kol.join(","), ...rijen].join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     const link = document.createElement("a");
     link.href = url;
@@ -103,6 +121,12 @@ export default function AdminDashboard({
           </button>
         </div>
       </div>
+
+      {opslaanFout && (
+        <p role="alert" className="mt-4 rounded-xl bg-red-100 px-4 py-3 font-semibold text-red-800">
+          {opslaanFout}
+        </p>
+      )}
 
       <div className="mt-6 flex flex-wrap gap-2">
         {tellingen.map((t) => (

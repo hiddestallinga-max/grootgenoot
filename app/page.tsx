@@ -111,7 +111,7 @@ export default function Home() {
           return (
             <div
               key={tile.key}
-              className="group block cursor-default opacity-80"
+              className="block cursor-default opacity-80"
               aria-disabled="true"
             >
               {inner}

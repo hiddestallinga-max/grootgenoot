@@ -4,12 +4,14 @@ import { createClient } from "@supabase/supabase-js";
 // Deze key omzeilt Row Level Security en mag NOOIT in de browser komen.
 // Wordt daarom alleen geïmporteerd in server components en route handlers.
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+// SUPABASE_URL heeft de voorkeur (niets hier hoeft de browser in);
+// NEXT_PUBLIC_SUPABASE_URL blijft werken voor bestaande omgevingen.
+const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!url || !serviceKey) {
   throw new Error(
-    "Ontbrekende env-variabelen: NEXT_PUBLIC_SUPABASE_URL en/of SUPABASE_SERVICE_ROLE_KEY. Zie .env.example.",
+    "Ontbrekende env-variabelen: SUPABASE_URL en/of SUPABASE_SERVICE_ROLE_KEY. Zie .env.example.",
   );
 }
 
