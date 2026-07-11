@@ -47,9 +47,11 @@ export async function POST(request: Request) {
         country: "NL",
         email: gg.email,
         business_type: "individual",
+        // De standaardcombinatie die Stripe automatisch goedkeurt.
+        // "transfers" alleen mag pas na handmatige goedkeuring door Stripe.
         capabilities: {
+          card_payments: { requested: true },
           transfers: { requested: true },
-          sepa_debit_payments: { requested: true },
         },
         business_profile: {
           product_description:
