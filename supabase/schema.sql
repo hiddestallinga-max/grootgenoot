@@ -67,3 +67,50 @@ create table if not exists public.berichten (
   created_at timestamptz not null default now()
 );
 alter table public.berichten enable row level security;
+
+-- ===== Betalen via Stripe (koppelingen, uren, facturen) =====
+
+-- Stripe-koppelvelden op aanmeldingen
+alter table public.aanmeldingen add column if not exists stripe_account_id text;          -- grootgenoot: Express-account
+alter table public.aanmeldingen add column if not exists stripe_onboarded boolean not null default false;
+alter table public.aanmeldingen add column if not exists stripe_customer_id text;         -- hulpvrager: klant
+alter table public.aanmeldingen add column if not exists stripe_machtiging boolean not null default false;
+
+-- Een koppeling tussen een hulpvrager en een grootgenoot, met tariefafspraak.
+create table if not exists public.koppelingen (
+  id              uuid primary key default gen_random_uuid(),
+  hulpvrager_id   uuid not null references public.aanmeldingen(id) on delete cascade,
+  grootgenoot_id  uuid not null references public.aanmeldingen(id) on delete cascade,
+  uurtarief_cent  integer not null check (uurtarief_cent between 1000 and 10000),
+  service_pct     numeric not null default 18,
+  actief          boolean not null default true,
+  created_at      timestamptz not null default now()
+);
+alter table public.koppelingen enable row level security;
+
+-- Gewerkte uren, ingediend door de grootgenoot, goedgekeurd in de regiekamer.
+create table if not exists public.uren (
+  id            uuid primary key default gen_random_uuid(),
+  koppeling_id  uuid not null references public.koppelingen(id) on delete cascade,
+  datum         date not null,
+  minuten       integer not null check (minuten > 0 and minuten <= 720),
+  omschrijving  text,
+  status        text not null default 'ingediend'
+                check (status in ('ingediend','goedgekeurd','afgekeurd','gefactureerd')),
+  created_at    timestamptz not null default now()
+);
+alter table public.uren enable row level security;
+
+-- Maandfacturen (één incasso per koppeling per run).
+create table if not exists public.facturen (
+  id                        uuid primary key default gen_random_uuid(),
+  koppeling_id              uuid not null references public.koppelingen(id) on delete cascade,
+  periode                   text not null,
+  totaal_cent               integer not null,
+  service_cent              integer not null,
+  stripe_payment_intent_id  text,
+  status                    text not null default 'aangemaakt'
+                            check (status in ('aangemaakt','in_behandeling','betaald','mislukt')),
+  created_at                timestamptz not null default now()
+);
+alter table public.facturen enable row level security;

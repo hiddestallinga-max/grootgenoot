@@ -61,6 +61,11 @@ export async function POST(request: Request) {
     regels.push(
       `Bekijk of wijzig ${label}:\n${origin}/groot-support/mijn-aanmelding/bewerken?token=${token}`,
     );
+    if (rij.rol === "grootgenoot") {
+      regels.push(
+        `Geef je gewerkte uren door:\n${origin}/uren?token=${token}`,
+      );
+    }
   }
 
   await stuurMail({
