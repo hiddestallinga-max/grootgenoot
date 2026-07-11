@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
-/* GrootGenoot huisstijl — warm, rustig, hoog contrast, grote leesbaarheid */
+/* Grootgenoot huisstijl — richting B: zorg & vertrouwen.
+   Rustig blauw met teal, professioneel, hoog contrast, grote leesbaarheid. */
 @theme {
-  --color-cream: #fbf7f0;
-  --color-ink: #2b2622;
-  --color-muted: #6b6258;
+  --color-cream: #f2f6fa;   /* pagina-achtergrond (koel, licht) */
+  --color-ink: #0c2f4e;     /* diep blauw — hoofdtekst */
+  --color-muted: #4a5d6e;   /* gedempt blauwgrijs */
 
-  --color-samen: #2f6b4f;   /* Groot Samen  - warm groen */
-  --color-support: #c4622d; /* Groot Support - terracotta (kern) */
-  --color-sport: #2c6e8f;   /* Groot Sport  - rustig blauw */
-  --color-smaakt: #c98a1e;  /* Groot Smaakt - amber */
+  --color-support: #185fa5; /* kernkleur — betrouwbaar blauw */
+  --color-samen: #0f6e56;   /* teal — accenten overige tegels */
+  --color-sport: #2c6e8f;
+  --color-smaakt: #0f6e56;
+  --color-transport: #2c6e8f;
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
@@ -28,4 +30,82 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-support);
   outline-offset: 2px;
+}
+
+/* --- Glazen tegels en knoppen ---------------------------------------
+   De beweging (--tx/--ty/--rx/--ry) en de glanspositie (--mx/--my)
+   worden aangestuurd door components/GlasKaart.tsx. */
+@layer components {
+  .glas {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow:
+      0 4px 24px rgba(12, 47, 78, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transform: perspective(900px) rotateX(var(--rx, 0deg))
+      rotateY(var(--ry, 0deg))
+      translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+    transition:
+      transform 0.18s ease-out,
+      box-shadow 0.3s ease;
+    will-change: transform;
+  }
+
+  .glas:hover {
+    box-shadow:
+      0 18px 44px rgba(12, 47, 78, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  /* Lichtglans die de muis volgt */
+  .glas::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.7),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .glas:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Zwevende kleurvlekken op de achtergrond — zichtbaar dóór het glas */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  animation: zweef 16s ease-in-out infinite alternate;
+}
+
+@keyframes zweef {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(40px, -30px, 0) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glas {
+    transform: none !important;
+    transition: none;
+  }
+  .blob {
+    animation: none;
+  }
 }

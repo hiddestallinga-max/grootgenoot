@@ -1,131 +1,154 @@
-import Link from "next/link";
+import GlasKaart from "@/components/GlasKaart";
 
-type Tile = {
-  key: string;
-  title: string;
-  tagline: string;
-  href: string | null; // null = binnenkort
-  accent: string; // tailwind arbitrary color klasse-basis
-};
+/* Simpele lijn-iconen (zelfde stijl: dunne lijnen, afgeronde hoeken) */
+function IcoonSupport() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-9 w-9" aria-hidden="true">
+      <path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.5-6.6 5 5 0 1 1 7.5 6.6Z" />
+    </svg>
+  );
+}
+function IcoonSamen() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8" aria-hidden="true">
+      <circle cx="9" cy="8" r="3" />
+      <path d="M4 19c0-2.8 2.2-5 5-5s5 2.2 5 5" />
+      <circle cx="17" cy="9" r="2.5" />
+      <path d="M15.5 14.6a4.5 4.5 0 0 1 6 4.4" />
+    </svg>
+  );
+}
+function IcoonSport() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8" aria-hidden="true">
+      <path d="M3 12h4l2.5-6 4 12L16 12h5" />
+    </svg>
+  );
+}
+function IcoonSmaakt() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8" aria-hidden="true">
+      <circle cx="12" cy="13" r="7" />
+      <circle cx="12" cy="13" r="3" />
+      <path d="M9 3.5v1M12 2.5v2M15 3.5v1" />
+    </svg>
+  );
+}
+function IcoonTransport() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <path d="M3 10h18M9 4v6M15 4v6" />
+      <circle cx="7.5" cy="18.5" r="1.5" />
+      <circle cx="16.5" cy="18.5" r="1.5" />
+    </svg>
+  );
+}
 
-const tiles: Tile[] = [
+const kleineTegels = [
   {
     key: "samen",
-    title: "Groot Samen",
-    tagline: "Ouderen brengen elkaar samen — in groepen of één-op-één.",
-    href: null,
-    accent: "samen",
+    titel: "Groot Samen",
+    tekst: "Elkaar ontmoeten, in groepen of één-op-één.",
+    kleur: "text-samen",
+    icoon: <IcoonSamen />,
   },
   {
     key: "sport",
-    title: "Groot Sport",
-    tagline: "Samen bewegen, opgehaald met de plusbus. Binnen of buiten.",
-    href: null,
-    accent: "sport",
-  },
-  {
-    key: "support",
-    title: "Groot Support",
-    tagline:
-      "De kern. Vind ondersteuning, of word grootgenoot en help iemand.",
-    href: "/groot-support",
-    accent: "support",
+    titel: "Groot Sport",
+    tekst: "Samen bewegen, binnen of buiten.",
+    kleur: "text-sport",
+    icoon: <IcoonSport />,
   },
   {
     key: "smaakt",
-    title: "Groot Smaakt",
-    tagline: "Samen koken en eten in een gezellige eetclub.",
-    href: null,
-    accent: "smaakt",
+    titel: "Groot Smaakt",
+    tekst: "Samen koken en eten in een eetclub.",
+    kleur: "text-samen",
+    icoon: <IcoonSmaakt />,
+  },
+  {
+    key: "transport",
+    titel: "Groot Transport",
+    tekst: "Vervoer naar activiteiten en afspraken.",
+    kleur: "text-sport",
+    icoon: <IcoonTransport />,
   },
 ];
-
-function accentStyles(accent: string) {
-  const map: Record<string, { bar: string; badge: string }> = {
-    samen: { bar: "bg-samen", badge: "text-samen" },
-    sport: { bar: "bg-sport", badge: "text-sport" },
-    support: { bar: "bg-support", badge: "text-support" },
-    smaakt: { bar: "bg-smaakt", badge: "text-smaakt" },
-  };
-  return map[accent] ?? map.support;
-}
 
 export default function Home() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
-      <header className="mb-12 text-center">
-        <p className="mb-3 text-lg font-semibold tracking-wide text-support">
-          GrootGenoot
+      <header className="max-w-2xl">
+        <p className="mb-3 text-lg font-semibold tracking-wide text-samen">
+          Samen tegen vergrijzing
         </p>
         <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
-          Samen tegen vergrijzing
+          Ondersteuning thuis, zonder wachtlijst
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-xl leading-relaxed text-muted">
-          Zorg waar het écht telt — zelfs al is het maar een kwartiertje.
-          GrootGenoot verbindt ouderen met mensen die willen ondersteunen.
+        <p className="mt-5 text-xl leading-relaxed text-muted">
+          Grootgenoot koppelt ouderen aan betrouwbare helpers uit de buurt —
+          al is het maar een kwartiertje. In samenwerking met huisarts en
+          buurtzorg.
         </p>
       </header>
 
-      <section aria-label="Onderdelen" className="grid gap-6 sm:grid-cols-2">
-        {tiles.map((tile) => {
-          const styles = accentStyles(tile.accent);
-          const isActive = tile.href !== null;
+      <div className="mt-8 flex flex-wrap gap-4">
+        <GlasKaart
+          href="/groot-support/hulp-zoeken"
+          volgKracht={14}
+          kantelKracht={7}
+          className="bg-support/90 border-support/40 px-8 py-4"
+        >
+          <span className="text-xl font-bold text-white">Ik zoek hulp</span>
+        </GlasKaart>
+        <GlasKaart
+          href="/groot-support/helpen"
+          volgKracht={14}
+          kantelKracht={7}
+          className="px-8 py-4"
+        >
+          <span className="text-xl font-bold text-support">Ik wil helpen</span>
+        </GlasKaart>
+      </div>
 
-          const inner = (
-            <div className="flex h-full flex-col rounded-2xl border border-black/5 bg-white p-7 shadow-sm transition group-hover:-translate-y-1 group-hover:shadow-md">
-              <span className={`mb-4 h-1.5 w-14 rounded-full ${styles.bar}`} />
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <h2 className="text-2xl font-bold text-ink">{tile.title}</h2>
-                {!isActive && (
-                  <span className="shrink-0 rounded-full bg-black/5 px-3 py-1 text-sm font-semibold text-muted">
-                    Binnenkort
-                  </span>
-                )}
-              </div>
-              <p className="text-lg leading-relaxed text-muted">
-                {tile.tagline}
+      <section aria-label="Onderdelen" className="mt-12">
+        <GlasKaart href="/groot-support" className="p-7">
+          <div className="flex flex-wrap items-center gap-5">
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-support/10 text-support">
+              <IcoonSupport />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-2xl font-bold text-ink">Groot Support</h2>
+              <p className="mt-1 text-lg leading-relaxed text-muted">
+                De kern: vind ondersteuning, of word grootgenoot en help iemand
+                in de buurt.
               </p>
-              {isActive && (
-                <span
-                  className={`mt-5 inline-flex items-center gap-2 text-lg font-semibold ${styles.badge}`}
-                >
-                  Ga naar {tile.title}
-                  <span aria-hidden="true">→</span>
-                </span>
-              )}
             </div>
-          );
-
-          if (isActive) {
-            return (
-              <Link
-                key={tile.key}
-                href={tile.href as string}
-                className="group block focus:outline-none"
-              >
-                {inner}
-              </Link>
-            );
-          }
-
-          return (
-            <div
-              key={tile.key}
-              className="block cursor-default opacity-80"
-              aria-disabled="true"
+            <span
+              aria-hidden="true"
+              className="hidden text-2xl font-bold text-support transition group-hover:translate-x-1 sm:block"
             >
-              {inner}
-            </div>
-          );
-        })}
-      </section>
+              →
+            </span>
+          </div>
+        </GlasKaart>
 
-      <footer className="mt-16 border-t border-black/10 pt-8 text-center text-base text-muted">
-        <p>
-          GrootGenoot — in samenwerking met huisarts, buurtzorg en
-          verzorgingstehuizen.
-        </p>
-      </footer>
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {kleineTegels.map((tegel) => (
+            <GlasKaart key={tegel.key} className="h-full p-6">
+              <span className={tegel.kleur}>{tegel.icoon}</span>
+              <h3 className="mt-3 text-xl font-bold text-ink">{tegel.titel}</h3>
+              <p className="mt-1 text-base leading-relaxed text-muted">
+                {tegel.tekst}
+              </p>
+              <span className="mt-4 inline-block rounded-full bg-ink/5 px-3 py-1 text-sm font-semibold text-muted">
+                Binnenkort
+              </span>
+            </GlasKaart>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

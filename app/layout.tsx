@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "GrootGenoot — samen tegen vergrijzing",
+  title: "Grootgenoot — ondersteuning thuis, zonder wachtlijst",
   description:
-    "GrootGenoot verbindt ouderen met mensen die willen ondersteunen. Zorg waar het écht telt — zelfs al is het een kwartiertje.",
+    "Grootgenoot koppelt ouderen aan helpers uit de buurt. Hulp waar het écht telt — zelfs al is het maar een kwartiertje.",
 };
 
 export default function RootLayout({
@@ -14,7 +16,29 @@ export default function RootLayout({
 }) {
   return (
     <html lang="nl">
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="flex min-h-screen flex-col antialiased">
+        {/* Zachte kleurvlekken achter alles; de glazen tegels vervagen ze. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+        >
+          <div
+            className="blob"
+            style={{ top: "-120px", left: "-100px", width: "420px", height: "420px", background: "rgba(24, 95, 165, 0.18)" }}
+          />
+          <div
+            className="blob"
+            style={{ top: "160px", right: "-140px", width: "480px", height: "480px", background: "rgba(15, 110, 86, 0.15)", animationDelay: "-6s" }}
+          />
+          <div
+            className="blob"
+            style={{ bottom: "-160px", left: "30%", width: "520px", height: "520px", background: "rgba(44, 110, 143, 0.14)", animationDelay: "-11s" }}
+          />
+        </div>
+        <SiteHeader />
+        <div className="flex-1">{children}</div>
+        <SiteFooter />
+      </body>
     </html>
   );
 }

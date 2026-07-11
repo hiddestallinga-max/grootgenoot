@@ -57,3 +57,13 @@ create index if not exists aanmeldingen_status_idx
 -- deze index — verwijder dan eerst de duplicaten.
 create unique index if not exists aanmeldingen_email_rol_uniek
   on public.aanmeldingen (lower(email), rol);
+
+-- Berichten via het contactformulier.
+create table if not exists public.berichten (
+  id         uuid primary key default gen_random_uuid(),
+  naam       text not null,
+  email      text not null,
+  bericht    text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.berichten enable row level security;

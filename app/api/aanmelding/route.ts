@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { aanmeldingSchema } from "@/lib/validatie";
 import { isToegestaan, ipVan } from "@/lib/rateLimit";
+import { stuurMail, eigenaarEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   // Maximaal 5 aanmeldingen per 10 minuten per IP tegen spam-scripts.
@@ -54,6 +55,36 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+
+  // Mails versturen mag nooit de aanmelding laten mislukken; die is al opgeslagen.
+  const d = parsed.data;
+  const rolLabel = d.rol === "hulpvrager" ? "zoekt ondersteuning" : "wil grootgenoot worden";
+  await Promise.allSettled([
+    stuurMail({
+      naar: eigenaarEmail(),
+      onderwerp: `Nieuwe aanmelding: ${d.voornaam} ${d.achternaam} (${rolLabel})`,
+      tekst: [
+        `Naam: ${d.voornaam} ${d.achternaam}`,
+        `Rol: ${rolLabel}`,
+        `E-mail: ${d.email}`,
+        d.telefoon ? `Telefoon: ${d.telefoon}` : null,
+        d.postcode ? `Postcode: ${d.postcode}` : null,
+        d.categorieen.length ? `Categorieën: ${d.categorieen.join(", ")}` : null,
+        d.urgentie ? `Urgentie: ${d.urgentie}` : null,
+        d.beschikbaarheid ? `Beschikbaarheid: ${d.beschikbaarheid}` : null,
+        d.toelichting ? `Toelichting: ${d.toelichting}` : null,
+        "",
+        "Bekijk alle aanmeldingen in de regiekamer: /admin",
+      ]
+        .filter((r) => r !== null)
+        .join("\n"),
+    }),
+    stuurMail({
+      naar: d.email,
+      onderwerp: "Bedankt voor je aanmelding bij Grootgenoot",
+      tekst: `Beste ${d.voornaam},\n\nBedankt voor je aanmelding bij Grootgenoot. We hebben je gegevens goed ontvangen en nemen persoonlijk contact met je op.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+    }),
+  ]);
 
   return NextResponse.json({ ok: true });
 }
