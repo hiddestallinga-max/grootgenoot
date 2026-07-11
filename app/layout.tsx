@@ -4,9 +4,9 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Grootgenoot — ondersteuning thuis, zonder wachtlijst",
+  title: "Grootgenoot — hulp en gezelschap aan huis",
   description:
-    "Grootgenoot koppelt ouderen aan helpers uit de buurt. Hulp waar het écht telt — zelfs al is het maar een kwartiertje.",
+    "Hulp en gezelschap aan huis, van mensen uit de buurt. Onze aanpak voor vergrijzing — ook voor een kwartiertje.",
 };
 
 export default function RootLayout({

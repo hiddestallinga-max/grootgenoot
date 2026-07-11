@@ -80,16 +80,12 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
       <header className="max-w-2xl">
-        <p className="mb-3 text-lg font-semibold tracking-wide text-samen">
-          Samen tegen vergrijzing
-        </p>
         <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
-          Ondersteuning thuis, zonder wachtlijst
+          Hulp en gezelschap aan huis
         </h1>
         <p className="mt-5 text-xl leading-relaxed text-muted">
-          Grootgenoot koppelt ouderen aan betrouwbare helpers uit de buurt —
-          al is het maar een kwartiertje. In samenwerking met huisarts en
-          buurtzorg.
+          Onze aanpak voor vergrijzing: mensen uit de buurt die voor je
+          klaarstaan — ook voor een kwartiertje.
         </p>
       </header>
 
@@ -134,17 +130,25 @@ export default function Home() {
           </div>
         </GlasKaart>
 
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <p className="mt-10 text-base font-semibold text-muted">
+          Binnenkort ook:
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {kleineTegels.map((tegel) => (
-            <GlasKaart key={tegel.key} className="h-full p-6">
-              <span className={tegel.kleur}>{tegel.icoon}</span>
-              <h3 className="mt-3 text-xl font-bold text-ink">{tegel.titel}</h3>
-              <p className="mt-1 text-base leading-relaxed text-muted">
-                {tegel.tekst}
-              </p>
-              <span className="mt-4 inline-block rounded-full bg-ink/5 px-3 py-1 text-sm font-semibold text-muted">
-                Binnenkort
-              </span>
+            <GlasKaart
+              key={tegel.key}
+              className="h-full p-4"
+              volgKracht={6}
+              kantelKracht={3}
+            >
+              <div className="flex items-center gap-3">
+                <span className={`${tegel.kleur} shrink-0 [&>svg]:h-6 [&>svg]:w-6`}>
+                  {tegel.icoon}
+                </span>
+                <h3 className="text-lg font-bold leading-tight text-ink">
+                  {tegel.titel}
+                </h3>
+              </div>
             </GlasKaart>
           ))}
         </div>
