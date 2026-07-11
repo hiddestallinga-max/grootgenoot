@@ -15,7 +15,7 @@ const encoder = new TextEncoder();
 
 export const SESSIE_DUUR_SECONDEN = 60 * 60 * 24 * 7; // 7 dagen
 
-async function hmacHex(geheim: string, data: string): Promise<string> {
+export async function hmacHex(geheim: string, data: string): Promise<string> {
   const sleutel = await crypto.subtle.importKey(
     "raw",
     encoder.encode(geheim),
