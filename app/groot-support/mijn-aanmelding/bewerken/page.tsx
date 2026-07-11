@@ -5,13 +5,13 @@ import WijzigForm from "@/components/WijzigForm";
 import { STATUS_LABELS, type Aanmelding, type Status } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Mijn aanmelding — Grootgenoot" };
+export const metadata = { title: "Mijn aanmelding | Grootgenoot" };
 
 const STATUS_UITLEG: Record<Status, string> = {
   nieuw: "We hebben je aanmelding ontvangen en nemen binnenkort contact met je op.",
   gebeld: "We hebben contact met je gehad en zijn op zoek naar een goede match.",
   intake: "We zijn bezig met de intake om je goed te leren kennen.",
-  match_voorgesteld: "We hebben een match voorgesteld — je hoort snel van ons.",
+  match_voorgesteld: "We hebben een match voorgesteld. Je hoort snel van ons.",
   gekoppeld: "Je bent gekoppeld! De eerste afspraak wordt ingepland.",
   loopt: "Je koppeling loopt. Vragen? We zijn altijd bereikbaar.",
 };
@@ -42,7 +42,7 @@ export default async function Bewerken({
           Deze link werkt niet meer
         </h1>
         <p className="mt-5 text-xl leading-relaxed text-muted">
-          De link is verlopen of ongeldig. Geen zorgen — je vraagt zo een
+          De link is verlopen of ongeldig. Geen zorgen: je vraagt zo een
           nieuwe aan.
         </p>
         <Link

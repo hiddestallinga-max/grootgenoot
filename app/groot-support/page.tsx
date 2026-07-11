@@ -1,7 +1,7 @@
 import Link from "next/link";
 import GlasKaart from "@/components/GlasKaart";
 
-export const metadata = { title: "Groot Support — Grootgenoot" };
+export const metadata = { title: "Groot Support | Grootgenoot" };
 
 export default function GrootSupport() {
   return (

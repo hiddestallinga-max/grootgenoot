@@ -56,7 +56,7 @@ export default function AdminDashboard({
       // Terugdraaien: de wijziging is niet opgeslagen.
       setItems(vorige);
       setOpslaanFout(
-        "Opslaan mislukt. Mogelijk is je sessie verlopen — herlaad de pagina en probeer het opnieuw.",
+        "Opslaan mislukt. Mogelijk is je sessie verlopen. Herlaad de pagina en probeer het opnieuw.",
       );
     }
   }

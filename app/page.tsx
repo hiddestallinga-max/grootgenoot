@@ -81,11 +81,11 @@ export default function Home() {
     <main className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
       <header className="max-w-2xl">
         <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
-          Hulp en gezelschap aan huis
+          Hulp en gezelschap, thuis en op pad
         </h1>
         <p className="mt-5 text-xl leading-relaxed text-muted">
           Onze aanpak voor vergrijzing: mensen uit de buurt die voor je
-          klaarstaan — ook voor een kwartiertje.
+          klaarstaan, al is het maar een kwartiertje.
         </p>
       </header>
 

@@ -3,7 +3,7 @@ import type { Aanmelding } from "@/lib/types";
 import AdminDashboard from "@/components/AdminDashboard";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Regiekamer — GrootGenoot" };
+export const metadata = { title: "Regiekamer | Grootgenoot" };
 
 export default async function AdminPage() {
   const { data, error } = await supabaseAdmin

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import AanmeldForm from "@/components/AanmeldForm";
 
-export const metadata = { title: "Ik zoek ondersteuning — GrootGenoot" };
+export const metadata = { title: "Ik zoek ondersteuning | Grootgenoot" };
 
 export default function HulpZoeken() {
   return (
@@ -17,7 +17,7 @@ export default function HulpZoeken() {
       </h1>
       <p className="mt-5 mb-10 text-xl leading-relaxed text-muted">
         Laat je gegevens achter. We nemen persoonlijk contact met je op om te
-        kijken hoe we kunnen helpen — hoe klein de vraag ook is.
+        kijken hoe we kunnen helpen, hoe klein de vraag ook is.
       </p>
       <AanmeldForm rol="hulpvrager" />
     </main>

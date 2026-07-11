@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ContactForm from "@/components/ContactForm";
 
-export const metadata = { title: "Contact — Grootgenoot" };
+export const metadata = { title: "Contact | Grootgenoot" };
 
 export default function Contact() {
   return (
@@ -17,8 +17,8 @@ export default function Contact() {
         Contact
       </h1>
       <p className="mt-5 text-xl leading-relaxed text-muted">
-        Vragen, ideeën of gewoon even overleggen? Stuur een bericht — we
-        reageren zo snel mogelijk.
+        Vragen, ideeën of gewoon even overleggen? Stuur een bericht, dan
+        reageren we zo snel mogelijk.
       </p>
 
       <div className="glas mt-8 p-6">

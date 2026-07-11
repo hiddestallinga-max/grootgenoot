@@ -73,7 +73,7 @@ export default function WijzigForm({ aanmelding, token }: Props) {
       <div className="glas p-8 text-center">
         <h2 className="text-2xl font-bold text-ink">Je bent afgemeld</h2>
         <p className="mt-3 text-lg leading-relaxed text-muted">
-          Al je gegevens zijn verwijderd. Bedankt en het ga je goed — je bent
+          Al je gegevens zijn verwijderd. Bedankt en het ga je goed. Je bent
           altijd welkom om je opnieuw aan te melden.
         </p>
         <Link

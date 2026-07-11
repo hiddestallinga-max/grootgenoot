@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "Privacyverklaring — GrootGenoot" };
+export const metadata = { title: "Privacyverklaring | Grootgenoot" };
 
 export default function Privacy() {
   return (
@@ -16,7 +16,7 @@ export default function Privacy() {
       </h1>
       <div className="mt-6 space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          GrootGenoot verwerkt de gegevens die je bij een aanmelding achterlaat
+          Grootgenoot verwerkt de gegevens die je bij een aanmelding achterlaat
           (naam, e-mailadres, telefoonnummer, postcode en wat je zoekt of biedt)
           met één doel: contact met je opnemen om een passende koppeling te
           maken.

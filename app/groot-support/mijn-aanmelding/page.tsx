@@ -1,7 +1,7 @@
 import Link from "next/link";
 import LinkAanvraagForm from "@/components/LinkAanvraagForm";
 
-export const metadata = { title: "Mijn aanmelding — Grootgenoot" };
+export const metadata = { title: "Mijn aanmelding | Grootgenoot" };
 
 export default function MijnAanmelding() {
   return (

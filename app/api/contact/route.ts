@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
   await stuurMail({
     naar: eigenaarEmail(),
-    onderwerp: `Nieuw bericht via de site — ${naam}`,
+    onderwerp: `Nieuw bericht via de site van ${naam}`,
     tekst: `Naam: ${naam}\nE-mail: ${email}\n\n${bericht}`,
   });
 

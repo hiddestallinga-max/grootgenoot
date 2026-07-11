@@ -1,7 +1,7 @@
 import Link from "next/link";
 import AanmeldForm from "@/components/AanmeldForm";
 
-export const metadata = { title: "Ik wil iemand ondersteunen — GrootGenoot" };
+export const metadata = { title: "Ik wil iemand ondersteunen | Grootgenoot" };
 
 export default function Helpen() {
   return (

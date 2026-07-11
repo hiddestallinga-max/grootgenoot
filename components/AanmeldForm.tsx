@@ -225,7 +225,7 @@ export default function AanmeldForm({ rol }: Props) {
           className="mt-1 h-5 w-5 accent-support"
         />
         <span>
-          Ik ga ermee akkoord dat GrootGenoot mijn gegevens gebruikt om contact
+          Ik ga ermee akkoord dat Grootgenoot mijn gegevens gebruikt om contact
           met me op te nemen. Zie de{" "}
           <Link href="/privacy" className="font-semibold text-support underline">
             privacyverklaring
