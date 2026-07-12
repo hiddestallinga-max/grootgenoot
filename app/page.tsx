@@ -118,7 +118,7 @@ export default function Home() {
             src="/hero.jpg"
             alt="Een grootgenoot en een oudere drinken samen koffie en houden elkaars hand vast"
             width={1400}
-            height={1926}
+            height={1000}
             priority
             sizes="(min-width: 1024px) 480px, 100vw"
             className="h-72 w-full rounded-3xl object-cover object-center shadow-lg sm:h-96 lg:h-[480px]"
