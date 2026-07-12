@@ -51,13 +51,13 @@ export default function GrootSupport() {
         </GlasKaart>
 
         <GlasKaart href="/groot-support/mijn-aanmelding" className="p-7">
-          <h2 className="text-2xl font-bold text-ink">Mijn registratie</h2>
+          <h2 className="text-2xl font-bold text-ink">Ik heb me al aangemeld</h2>
           <p className="mt-2 text-lg leading-relaxed text-muted">
             Bekijk de status van je aanmelding, wijzig of verwijder je
             gegevens, geef uren door en bekijk je maandoverzichten.
           </p>
           <span className="mt-5 inline-flex items-center gap-2 text-lg font-semibold text-support">
-            Mijn registratie{" "}
+            Mijn aanmelding{" "}
             <span aria-hidden="true" className="transition group-hover:translate-x-1">
               →
             </span>

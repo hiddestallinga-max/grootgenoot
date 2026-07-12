@@ -5,11 +5,11 @@ import Image from "next/image";
 import { useState } from "react";
 
 const links = [
-  { href: "/groot-support", label: "Hulp" },
+  { href: "/groot-support", label: "Aanmelden" },
   { href: "/over", label: "Over" },
   { href: "/tarieven", label: "Tarieven" },
   { href: "/contact", label: "Contact" },
-  { href: "/groot-support/mijn-aanmelding", label: "Registratie" },
+  { href: "/groot-support/mijn-aanmelding", label: "Ik heb me al aangemeld" },
 ];
 
 export default function SiteHeader() {
@@ -25,22 +25,22 @@ export default function SiteHeader() {
           onClick={() => setOpen(false)}
         >
           <Image
-            src="/grootgenoot-beeldmerk.svg"
+            src="/grootgenoot-logo.svg"
             alt="Grootgenoot"
-            width={86}
-            height={74}
+            width={316}
+            height={92}
             priority
-            className="h-10 w-auto"
+            className="h-9 w-auto sm:h-10"
           />
         </Link>
 
         {/* Desktop navigatie */}
-        <nav className="hidden items-center gap-6 text-lg font-semibold md:flex">
+        <nav className="hidden items-center gap-5 text-base font-semibold lg:flex">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="text-ink transition hover:text-support"
+              className="whitespace-nowrap text-ink transition hover:text-support"
             >
               {l.label}
             </Link>
@@ -54,7 +54,7 @@ export default function SiteHeader() {
           aria-expanded={open}
           aria-controls="mobiel-menu"
           aria-label={open ? "Menu sluiten" : "Menu openen"}
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-ink transition hover:bg-ink/5 md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-ink transition hover:bg-ink/5 lg:hidden"
         >
           <svg
             viewBox="0 0 24 24"
@@ -85,7 +85,7 @@ export default function SiteHeader() {
       {open && (
         <nav
           id="mobiel-menu"
-          className="border-t border-ink/10 bg-white/95 backdrop-blur-md md:hidden"
+          className="border-t border-ink/10 bg-white/95 backdrop-blur-md lg:hidden"
         >
           <div className="mx-auto flex max-w-5xl flex-col px-5 py-2">
             {links.map((l) => (

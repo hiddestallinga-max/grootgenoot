@@ -5,9 +5,11 @@ import GlasKaart from "@/components/GlasKaart";
 function IcoonSupport() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-9 w-9" aria-hidden="true">
-      {/* Hart (zorg) met hartslaglijn — geïnspireerd op het 'zorgende handen'-logo */}
-      <path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.5-6.6 5 5 0 1 1 7.5 6.6Z" />
-      <path d="M7.6 11.4h2l1.1-2.4 1.8 4 1.2-2.6h2.7" />
+      {/* Hart met handen — zorg en steun */}
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66" />
+      <path d="m18 15-2-2" />
+      <path d="m15 18-2-2" />
     </svg>
   );
 }
@@ -33,8 +35,11 @@ function IcoonSport() {
 function IcoonSmaakt() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8" aria-hidden="true">
-      <circle cx="10" cy="13" r="6.5" />
-      <path d="M16.3 11.2 21.6 8.6" />
+      {/* Kookpan */}
+      <circle cx="9.5" cy="14.5" r="5.5" />
+      <path d="M15 14.5h7" />
+      <path d="M7.5 3.5v2.5" />
+      <path d="M11.5 3.5v2.5" />
     </svg>
   );
 }
@@ -85,16 +90,10 @@ export default function Home() {
     <main className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
       <div className="grid items-center gap-10 lg:grid-cols-2">
         <header>
-          <h1 className="sr-only">Grootgenoot</h1>
-          <Image
-            src="/grootgenoot-logo.svg"
-            alt="Grootgenoot"
-            width={316}
-            height={92}
-            priority
-            className="h-16 w-auto sm:h-20"
-          />
-          <p className="mt-1 text-2xl font-normal italic leading-none text-muted sm:text-3xl">
+          <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
+            groot·ge·noot
+          </h1>
+          <p className="mt-1 text-2xl font-normal italic text-muted sm:text-3xl">
             (de)
           </p>
           <p className="mt-5 text-xl leading-relaxed text-muted">

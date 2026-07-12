@@ -75,7 +75,7 @@ export default function Privacy() {
           <h2 className="text-2xl font-bold text-ink">Hoe lang we bewaren</h2>
           <p className="mt-3">
             Aanmeldgegevens bewaren we tot je je afmeldt (dat kan altijd zelf,
-            via &quot;Mijn registratie&quot; op de site) en uiterlijk twee jaar na
+            via &quot;Ik heb me al aangemeld&quot; op de site) en uiterlijk twee jaar na
             het laatste contact. Berichten via het contactformulier bewaren we
             maximaal een jaar. Facturen en betaalgegevens bewaren we zeven
             jaar; dat is de wettelijke fiscale bewaarplicht.
