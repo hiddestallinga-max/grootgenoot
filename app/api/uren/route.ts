@@ -12,6 +12,7 @@ const schema = z.object({
   koppeling_id: z.string().uuid(),
   datum: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ongeldige datum"),
   minuten: z.number().int().min(15).max(720),
+  km: z.number().min(0).max(1000).optional().default(0),
   omschrijving: z.string().trim().max(300).optional().or(z.literal("")),
 });
 
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
     koppeling_id: kop.id,
     datum: parsed.data.datum,
     minuten: parsed.data.minuten,
+    km: parsed.data.km,
     omschrijving: parsed.data.omschrijving || null,
   });
 

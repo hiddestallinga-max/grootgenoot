@@ -29,7 +29,7 @@ export default function Tarieven() {
       <div className="mt-4 space-y-4 text-xl leading-relaxed text-muted">
         <p>
           Je grootgenoot is zelfstandig ondernemer en ontvangt zijn of haar
-          volledige uurtarief, meestal tussen de 28 en 35 euro. Dat tarief
+          volledige uurtarief, meestal tussen de 25 en 35 euro. Dat tarief
           bepaalt de grootgenoot zelf, in overleg met jou.
         </p>
         <p>
@@ -51,6 +51,14 @@ export default function Tarieven() {
           familie. Alle bedragen zijn inclusief btw.
         </p>
         <p>
+          Reist je grootgenoot voor jou, bijvoorbeeld om je ergens naartoe te
+          brengen, dan komt daar een reiskostenvergoeding bij van € 0,23 per
+          kilometer. Dat is het wettelijke onbelaste tarief. Deze vergoeding
+          gaat volledig naar je grootgenoot, er zit geen servicepercentage op,
+          en de gereden kilometers staan apart op je maandoverzicht. Blijft de
+          hulp bij jou thuis, dan betaal je hier niets voor.
+        </p>
+        <p>
           Verder betaal je niets: geen inschrijfkosten, geen matchkosten, geen
           minimum aantal uren en geen opzegtermijn. De eerste kennismaking is
           altijd gratis en vrijblijvend.
@@ -64,13 +72,8 @@ export default function Tarieven() {
           e-mail een overzicht van de gewerkte uren, zodat je nooit voor
           verrassingen staat. Het betaalsysteem splitst het bedrag daarna
           automatisch: het uurdeel gaat rechtstreeks naar je grootgenoot, het
-          servicedeel naar Grootgenoot. Het geld van je grootgenoot komt dus
+          servicedeel naar het platform. Het geld van je grootgenoot komt dus
           nooit op onze rekening.
-        </p>
-        <p className="text-lg">
-          De automatische betaalomgeving wordt op dit moment ingericht. Tot
-          die klaar is, ontvang je hetzelfde maandoverzicht en betaal je de
-          grootgenoot en Grootgenoot nog los van elkaar.
         </p>
       </div>
 

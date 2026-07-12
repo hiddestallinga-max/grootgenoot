@@ -32,7 +32,7 @@ export default function Contact() {
           </a>
         </p>
         <p className="mt-3 text-base text-muted">
-          KvK 42103745 · BTW NL005497451B95 · IBAN NL59 ASNB 0708 8601 92
+          KvK 42103745 · BTW NL005497451B95 · IBAN: NL59 ASNB 0708 8601 92
         </p>
       </div>
 

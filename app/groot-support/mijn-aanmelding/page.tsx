@@ -14,7 +14,7 @@ export default function MijnAanmelding() {
       </Link>
 
       <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
-        Ik heb me al aangemeld
+        Mijn registratie
       </h1>
       <p className="mt-5 mb-10 text-xl leading-relaxed text-muted">
         Vul je e-mailadres in, dan sturen we je een beveiligde link. Daarmee kun

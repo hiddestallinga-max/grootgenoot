@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripe, isStripeGeconfigureerd, euroTekst } from "@/lib/stripe";
 import { stuurMail, eigenaarEmail } from "@/lib/email";
+import { reiskostenCent, REISKOSTEN_CENT_PER_KM } from "@/lib/tarieven";
 
 // Start de maandincasso voor één koppeling: telt de goedgekeurde uren op,
 // mailt de cliënt het overzicht en maakt één SEPA-incasso aan die Stripe
@@ -72,7 +73,7 @@ export async function POST(request: Request) {
 
   const { data: uren } = await supabaseAdmin
     .from("uren")
-    .select("id, datum, minuten, omschrijving")
+    .select("id, datum, minuten, km, omschrijving")
     .eq("koppeling_id", kop.id)
     .eq("status", "goedgekeurd")
     .order("datum");
@@ -85,9 +86,12 @@ export async function POST(request: Request) {
   }
 
   const totaalMinuten = uren.reduce((som, u) => som + u.minuten, 0);
+  const totaalKm = uren.reduce((som, u) => som + Number(u.km ?? 0), 0);
   const urenCent = Math.round((totaalMinuten / 60) * kop.uurtarief_cent);
   const serviceCent = Math.round((urenCent * Number(kop.service_pct)) / 100);
-  const totaalCent = urenCent + serviceCent;
+  // Reiskostenvergoeding gaat volledig naar de grootgenoot: geen service erover.
+  const reisCent = reiskostenCent(totaalKm);
+  const totaalCent = urenCent + serviceCent + reisCent;
   const periode = new Date().toLocaleDateString("nl-NL", {
     month: "long",
     year: "numeric",
@@ -148,11 +152,16 @@ export async function POST(request: Request) {
     const regels = uren
       .map(
         (u) =>
-          `- ${new Date(u.datum).toLocaleDateString("nl-NL")}: ${(u.minuten / 60).toLocaleString("nl-NL")} uur${u.omschrijving ? ` (${u.omschrijving})` : ""}`,
+          `- ${new Date(u.datum).toLocaleDateString("nl-NL")}: ${(u.minuten / 60).toLocaleString("nl-NL")} uur${Number(u.km ?? 0) > 0 ? `, ${Number(u.km).toLocaleString("nl-NL")} km` : ""}${u.omschrijving ? ` (${u.omschrijving})` : ""}`,
       )
       .join("\n");
 
-    const overzicht = `Uren van ${grootgenoot.voornaam} ${grootgenoot.achternaam} (${periode}):\n${regels}\n\nUren (${(totaalMinuten / 60).toLocaleString("nl-NL")} uur x ${euroTekst(kop.uurtarief_cent)}): ${euroTekst(urenCent)}\nService Grootgenoot (${kop.service_pct}%): ${euroTekst(serviceCent)}\nTotaal: ${euroTekst(totaalCent)}`;
+    const reisRegel =
+      totaalKm > 0
+        ? `\nReiskosten (${totaalKm.toLocaleString("nl-NL")} km x ${euroTekst(REISKOSTEN_CENT_PER_KM)}): ${euroTekst(reisCent)}`
+        : "";
+
+    const overzicht = `Uren van ${grootgenoot.voornaam} ${grootgenoot.achternaam} (${periode}):\n${regels}\n\nUren (${(totaalMinuten / 60).toLocaleString("nl-NL")} uur x ${euroTekst(kop.uurtarief_cent)}): ${euroTekst(urenCent)}\nService Grootgenoot (${kop.service_pct}%): ${euroTekst(serviceCent)}${reisRegel}\nTotaal: ${euroTekst(totaalCent)}`;
 
     await Promise.allSettled([
       stuurMail({
@@ -163,7 +172,7 @@ export async function POST(request: Request) {
       stuurMail({
         naar: grootgenoot.email,
         onderwerp: `Je uitbetaling van Grootgenoot is onderweg (${periode})`,
-        tekst: `Beste ${grootgenoot.voornaam},\n\n${overzicht}\n\nJouw deel (${euroTekst(urenCent)}) wordt na verwerking door Stripe rechtstreeks op je rekening gestort.\n\nHartelijke groet,\nHidde van Grootgenoot`,
+        tekst: `Beste ${grootgenoot.voornaam},\n\n${overzicht}\n\nJouw deel (${euroTekst(urenCent + reisCent)}${reisCent > 0 ? `, inclusief ${euroTekst(reisCent)} reiskosten` : ""}) wordt na verwerking door Stripe rechtstreeks op je rekening gestort.\n\nHartelijke groet,\nHidde van Grootgenoot`,
       }),
       stuurMail({
         naar: eigenaarEmail(),

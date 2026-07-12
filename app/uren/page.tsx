@@ -85,7 +85,7 @@ export default async function Uren({
   const koppelingIds = koppelingen.map((k) => k.id);
   const { data: recenteUren } = await supabaseAdmin
     .from("uren")
-    .select("id, datum, minuten, status, omschrijving")
+    .select("id, datum, minuten, km, status, omschrijving")
     .in("koppeling_id", koppelingIds)
     .order("datum", { ascending: false })
     .limit(10);
@@ -123,6 +123,9 @@ export default async function Uren({
                 <span className="text-ink">
                   {new Date(u.datum).toLocaleDateString("nl-NL")} ·{" "}
                   {(u.minuten / 60).toLocaleString("nl-NL")} uur
+                  {Number(u.km ?? 0) > 0
+                    ? ` · ${Number(u.km).toLocaleString("nl-NL")} km`
+                    : ""}
                 </span>
                 <span className="text-base font-semibold text-muted">
                   {STATUS_TEKST[u.status] ?? u.status}

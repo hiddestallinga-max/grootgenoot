@@ -52,7 +52,7 @@ export default async function AdminPage() {
   const { data: koppelingenData } = await supabaseAdmin
     .from("koppelingen")
     .select(
-      "id, uurtarief_cent, service_pct, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), uren(id, datum, minuten, omschrijving, status)",
+      "id, uurtarief_cent, service_pct, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), uren(id, datum, minuten, km, omschrijving, status)",
     )
     .order("created_at", { ascending: false });
 

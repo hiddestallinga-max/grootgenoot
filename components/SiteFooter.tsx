@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SiteFooter() {
   return (
@@ -6,11 +7,19 @@ export default function SiteFooter() {
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="flex flex-wrap items-baseline justify-between gap-6">
           <div>
-            <p className="text-xl font-bold text-white">Grootgenoot</p>
-            <p className="mt-1 max-w-md text-base leading-relaxed">
-              Ondersteuning en gezelschap voor ouderen, door mensen uit de
-              buurt.
-            </p>
+            <Link
+              href="/"
+              aria-label="Grootgenoot, naar de startpagina"
+              className="inline-flex rounded-2xl bg-white px-4 py-3"
+            >
+              <Image
+                src="/grootgenoot-logo.svg"
+                alt="Grootgenoot"
+                width={316}
+                height={92}
+                className="h-11 w-auto"
+              />
+            </Link>
           </div>
           <div className="text-base">
             <p>

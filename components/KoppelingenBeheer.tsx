@@ -7,6 +7,7 @@ export type UrenRij = {
   id: string;
   datum: string;
   minuten: number;
+  km: number | null;
   omschrijving: string | null;
   status: string;
 };
@@ -179,8 +180,10 @@ export default function KoppelingenBeheer({
           const ingediend = k.uren.filter((u) => u.status === "ingediend");
           const goedgekeurd = k.uren.filter((u) => u.status === "goedgekeurd");
           const goedMinuten = goedgekeurd.reduce((s, u) => s + u.minuten, 0);
+          const goedKm = goedgekeurd.reduce((s, u) => s + Number(u.km ?? 0), 0);
           const urenCent = Math.round((goedMinuten / 60) * k.uurtarief_cent);
           const serviceCent = Math.round((urenCent * k.service_pct) / 100);
+          const reisCent = Math.round(goedKm * 23);
           const klaarVoorIncasso =
             goedgekeurd.length > 0 &&
             k.grootgenoot.onboarded &&
@@ -303,6 +306,9 @@ export default function KoppelingenBeheer({
                         <span>
                           {new Date(u.datum).toLocaleDateString("nl-NL")} ·{" "}
                           {(u.minuten / 60).toLocaleString("nl-NL")} uur
+                          {Number(u.km ?? 0) > 0
+                            ? ` · ${Number(u.km).toLocaleString("nl-NL")} km`
+                            : ""}
                           {u.omschrijving ? ` · ${u.omschrijving}` : ""}
                         </span>
                         <span className="flex gap-2">
@@ -344,11 +350,15 @@ export default function KoppelingenBeheer({
                   <span className="text-base text-ink">
                     Klaar voor incasso:{" "}
                     <span className="font-bold">
-                      {(goedMinuten / 60).toLocaleString("nl-NL")} uur ·{" "}
-                      {euro(urenCent + serviceCent)}
+                      {(goedMinuten / 60).toLocaleString("nl-NL")} uur
+                      {goedKm > 0
+                        ? ` · ${goedKm.toLocaleString("nl-NL")} km`
+                        : ""}{" "}
+                      · {euro(urenCent + serviceCent + reisCent)}
                     </span>{" "}
                     <span className="text-muted">
-                      ({euro(urenCent)} grootgenoot + {euro(serviceCent)} service)
+                      ({euro(urenCent)} grootgenoot + {euro(serviceCent)} service
+                      {reisCent > 0 ? ` + ${euro(reisCent)} reiskosten` : ""})
                     </span>
                   </span>
                   <button

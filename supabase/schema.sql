@@ -94,12 +94,16 @@ create table if not exists public.uren (
   koppeling_id  uuid not null references public.koppelingen(id) on delete cascade,
   datum         date not null,
   minuten       integer not null check (minuten > 0 and minuten <= 720),
+  km            numeric not null default 0 check (km >= 0 and km <= 1000),  -- gereisde kilometers voor reiskostenvergoeding
   omschrijving  text,
   status        text not null default 'ingediend'
                 check (status in ('ingediend','goedgekeurd','afgekeurd','gefactureerd')),
   created_at    timestamptz not null default now()
 );
 alter table public.uren enable row level security;
+
+-- Als de tabel al bestond zonder km-kolom, voeg 'm alsnog toe:
+alter table public.uren add column if not exists km numeric not null default 0;
 
 -- Maandfacturen (één incasso per koppeling per run).
 create table if not exists public.facturen (

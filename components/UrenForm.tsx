@@ -34,6 +34,7 @@ export default function UrenForm({
           koppeling_id: String(form.get("koppeling") ?? ""),
           datum: String(form.get("datum") ?? ""),
           minuten: Number(form.get("minuten") ?? 0),
+          km: Number(form.get("km") ?? 0),
           omschrijving: String(form.get("omschrijving") ?? ""),
         }),
       });
@@ -114,6 +115,28 @@ export default function UrenForm({
             ))}
           </select>
         </div>
+      </div>
+
+      <div>
+        <label htmlFor="km" className={labelClass}>
+          Gereisde kilometers{" "}
+          <span className="font-normal text-muted">(optioneel, heen en terug)</span>
+        </label>
+        <input
+          id="km"
+          name="km"
+          type="number"
+          min={0}
+          max={1000}
+          step={1}
+          inputMode="numeric"
+          defaultValue={0}
+          className={inputClass}
+        />
+        <p className="mt-1 text-base text-muted">
+          Voor de reiskostenvergoeding van € 0,23 per kilometer. Laat op 0
+          staan als je niet hebt gereisd.
+        </p>
       </div>
 
       <div>

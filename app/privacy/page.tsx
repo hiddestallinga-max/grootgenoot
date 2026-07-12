@@ -21,7 +21,7 @@ export default function Privacy() {
         <section>
           <h2 className="text-2xl font-bold text-ink">Wie wij zijn</h2>
           <p className="mt-3">
-            Grootgenoot (eenmanszaak, gevestigd in De Steeg, KvK 42103745) is
+            Grootgenoot (gevestigd in De Steeg, KvK 42103745) is
             verantwoordelijk voor de verwerking van persoonsgegevens zoals
             beschreven in deze verklaring. Vragen over je gegevens? Mail naar{" "}
             <a href="mailto:info@grootgenoot.nl" className="font-semibold text-support underline">
@@ -75,7 +75,7 @@ export default function Privacy() {
           <h2 className="text-2xl font-bold text-ink">Hoe lang we bewaren</h2>
           <p className="mt-3">
             Aanmeldgegevens bewaren we tot je je afmeldt (dat kan altijd zelf,
-            via &quot;Ik heb me al aangemeld&quot; op de site) en uiterlijk twee jaar na
+            via &quot;Mijn registratie&quot; op de site) en uiterlijk twee jaar na
             het laatste contact. Berichten via het contactformulier bewaren we
             maximaal een jaar. Facturen en betaalgegevens bewaren we zeven
             jaar; dat is de wettelijke fiscale bewaarplicht.
@@ -88,9 +88,7 @@ export default function Privacy() {
             Je mag je gegevens altijd inzien, laten aanpassen of laten
             verwijderen. Wijzigen en verwijderen kan direct zelf via de
             beveiligde link op de site, of stuur ons een mailtje en we regelen
-            het binnen enkele dagen. Ben je niet tevreden over hoe we met je
-            gegevens omgaan, dan kun je een klacht indienen bij de Autoriteit
-            Persoonsgegevens.
+            het binnen enkele dagen.
           </p>
         </section>
       </div>
