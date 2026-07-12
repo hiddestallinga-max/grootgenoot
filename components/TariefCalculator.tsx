@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-// Servicepercentage van Grootgenoot bovenop het uurtarief van de grootgenoot.
-export const SERVICE_PERCENTAGE = 18;
-
 function euro(bedrag: number): string {
   return bedrag.toLocaleString("nl-NL", {
     style: "currency",
@@ -17,8 +14,9 @@ function euro(bedrag: number): string {
 export default function TariefCalculator() {
   const [tarief, setTarief] = useState(30);
   const [uren, setUren] = useState(2);
+  const [servicePct, setServicePct] = useState(15);
 
-  const service = (tarief * SERVICE_PERCENTAGE) / 100;
+  const service = (tarief * servicePct) / 100;
   const perUur = tarief + service;
   const perMaand = perUur * uren * 4.33;
 
@@ -74,6 +72,29 @@ export default function TariefCalculator() {
         </div>
 
         <div>
+          <div className="flex items-baseline justify-between gap-4">
+            <label htmlFor="service" className="text-lg font-semibold text-ink">
+              Servicepercentage
+            </label>
+            <span className="text-lg font-bold text-support">{servicePct}%</span>
+          </div>
+          <input
+            id="service"
+            type="range"
+            min={10}
+            max={20}
+            step={1}
+            value={servicePct}
+            onChange={(e) => setServicePct(Number(e.target.value))}
+            className="mt-2 w-full accent-support"
+          />
+          <p className="mt-1 text-base text-muted">
+            10 tot 20%, afhankelijk van de hulpvraag. We spreken dit vooraf
+            met je af.
+          </p>
+        </div>
+
+        <div>
           <div
             className="flex h-6 w-full overflow-hidden rounded-full"
             aria-hidden="true"
@@ -95,7 +116,7 @@ export default function TariefCalculator() {
             <p className="flex items-center justify-between gap-4">
               <span className="flex items-center gap-2 text-muted">
                 <span className="inline-block h-3 w-3 rounded-full bg-samen" />
-                Service Grootgenoot ({SERVICE_PERCENTAGE}%)
+                Service Grootgenoot ({servicePct}%)
               </span>
               <span className="font-semibold text-ink">{euro(service)}</span>
             </p>

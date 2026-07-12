@@ -70,7 +70,7 @@ export default function KoppelingenBeheer({
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const tariefEuro = Number(String(form.get("tarief") ?? "30").replace(",", "."));
-    const servicePct = Number(String(form.get("service") ?? "18").replace(",", "."));
+    const servicePct = Number(String(form.get("service") ?? "15").replace(",", "."));
     await roep(
       "/api/admin/koppeling",
       {
@@ -157,7 +157,7 @@ export default function KoppelingenBeheer({
             min={0}
             max={50}
             step="0.5"
-            defaultValue={18}
+            defaultValue={15}
             required
             className={`${inputClass} w-20`}
           />

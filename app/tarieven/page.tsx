@@ -33,11 +33,22 @@ export default function Tarieven() {
           bepaalt de grootgenoot zelf, in overleg met jou.
         </p>
         <p>
-          Daarbovenop rekenen wij 18% service. Daarvoor krijg je: de
-          persoonlijke kennismaking en match, vervanging bij ziekte of
-          vakantie, een nieuwe match als het toch niet klikt, een duidelijk
-          maandoverzicht en één vast aanspreekpunt, ook voor je familie. Alle
-          bedragen zijn inclusief btw.
+          Daarbovenop rekenen wij 10 tot 20% service, afhankelijk van de
+          hulpvraag. Bij een lichte hulpvraag, zoals gezelschap of samen
+          boodschappen doen, zit je aan de onderkant. Vraagt de situatie om
+          meer coördinatie, bijvoorbeeld bij vergeetachtigheid, meerdere
+          hulpmomenten per week of afstemming met familie en huisarts, dan
+          ligt het percentage hoger. We spreken het vooraf met je af en het
+          blijft gelijk zolang de koppeling loopt.
+        </p>
+        <p>
+          Waar die service voor is: de persoonlijke kennismaking en een
+          zorgvuldige match, waarbij we van elke grootgenoot een verklaring
+          omtrent gedrag (VOG) en referenties vragen. Verder: vervanging bij
+          ziekte of vakantie, een nieuwe match als het toch niet klikt, de
+          urenregistratie en het duidelijke maandoverzicht, de veilige
+          automatische betaling, en één vast aanspreekpunt, ook voor je
+          familie. Alle bedragen zijn inclusief btw.
         </p>
         <p>
           Verder betaal je niets: geen inschrijfkosten, geen matchkosten, geen
