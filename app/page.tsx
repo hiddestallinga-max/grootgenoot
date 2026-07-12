@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import GlasKaart from "@/components/GlasKaart";
 import JsonLd from "@/components/JsonLd";
+import Vertrouwensbadges from "@/components/Vertrouwensbadges";
 import { SITE_URL } from "@/lib/site";
 
 const localBusiness = {
@@ -185,6 +186,8 @@ export default function Home() {
           />
         </div>
       </div>
+
+      <Vertrouwensbadges className="mt-10" />
 
       <section aria-label="Onderdelen" className="mt-12">
         <GlasKaart href="/groot-support" className="p-7">

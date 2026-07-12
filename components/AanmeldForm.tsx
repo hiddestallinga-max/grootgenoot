@@ -22,6 +22,8 @@ export default function AanmeldForm({ rol }: Props) {
   const [categorieen, setCategorieen] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "bezig" | "klaar">("idle");
   const [fout, setFout] = useState<string | null>(null);
+  const [voorWie, setVoorWie] = useState<"zelf" | "naaste">("zelf");
+  const naaste = rol === "hulpvrager" && voorWie === "naaste";
 
   function toggleCategorie(c: string) {
     setCategorieen((prev) =>
@@ -34,6 +36,11 @@ export default function AanmeldForm({ rol }: Props) {
     setFout(null);
     setStatus("bezig");
     const form = new FormData(e.currentTarget);
+
+    const ruweToelichting = String(form.get("toelichting") ?? "").trim();
+    const toelichting = naaste
+      ? `[Aanvraag namens een naaste] ${ruweToelichting}`.trim()
+      : ruweToelichting;
 
     const payload = {
       rol,
@@ -49,7 +56,7 @@ export default function AanmeldForm({ rol }: Props) {
           : undefined,
       beschikbaarheid:
         rol === "grootgenoot" ? String(form.get("beschikbaarheid") ?? "") : "",
-      toelichting: String(form.get("toelichting") ?? ""),
+      toelichting,
       toestemming: form.get("toestemming") === "on",
       website: String(form.get("website") ?? ""), // honeypot, hoort leeg te zijn
     };
@@ -72,9 +79,24 @@ export default function AanmeldForm({ rol }: Props) {
   if (status === "klaar") {
     return (
       <div className="rounded-2xl border border-black/5 bg-white p-8 text-center shadow-sm">
-        <h2 className="text-2xl font-bold text-ink">Bedankt voor je aanmelding!</h2>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-samen/10 text-samen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8" aria-hidden="true">
+            <path d="m5 12 4.5 4.5L19 7" />
+          </svg>
+        </div>
+        <h2 className="mt-4 text-2xl font-bold text-ink">
+          Gelukt! We nemen contact op.
+        </h2>
         <p className="mt-3 text-lg leading-relaxed text-muted">
-          We hebben je gegevens ontvangen en nemen persoonlijk contact met je op.
+          We hebben je aanmelding ontvangen en bellen of mailen je persoonlijk,
+          meestal binnen één werkdag. Helemaal gratis en vrijblijvend.
+        </p>
+        <p className="mt-4 text-lg text-muted">
+          Liever meteen contact? Bel{" "}
+          <a href="tel:+31612154010" className="font-semibold text-support underline">
+            06 12154010
+          </a>
+          .
         </p>
         <Link
           href="/"
@@ -97,6 +119,41 @@ export default function AanmeldForm({ rol }: Props) {
         <label htmlFor="website">Website</label>
         <input id="website" name="website" tabIndex={-1} autoComplete="off" />
       </div>
+
+      {rol === "hulpvrager" && (
+        <div>
+          <p className={labelClass}>Voor wie zoek je hulp?</p>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            {(
+              [
+                ["zelf", "Voor mezelf"],
+                ["naaste", "Voor een naaste"],
+              ] as const
+            ).map(([w, label]) => (
+              <button
+                key={w}
+                type="button"
+                onClick={() => setVoorWie(w)}
+                aria-pressed={voorWie === w}
+                className={`rounded-xl border p-4 text-lg font-semibold transition ${
+                  voorWie === w
+                    ? "border-support bg-support/10 text-ink"
+                    : "border-black/15 bg-white text-ink hover:border-support/50"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {naaste && (
+            <p className="mt-2 text-base leading-relaxed text-muted">
+              Vul hieronder <strong>je eigen</strong> gegevens in, dan nemen we
+              contact met jou op. De postcode is die van degene die hulp krijgt.
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
           <label htmlFor="voornaam" className={labelClass}>
@@ -141,7 +198,10 @@ export default function AanmeldForm({ rol }: Props) {
 
       <div className="max-w-xs">
         <label htmlFor="postcode" className={labelClass}>
-          Postcode <span className="font-normal text-muted">(voor iemand dichtbij)</span>
+          Postcode{" "}
+          <span className="font-normal text-muted">
+            {naaste ? "(van degene die hulp krijgt)" : "(voor iemand dichtbij)"}
+          </span>
         </label>
         <input
           id="postcode"
@@ -152,7 +212,9 @@ export default function AanmeldForm({ rol }: Props) {
       </div>
 
       <fieldset>
-        <legend className={labelClass}>{t.categorieLabel}</legend>
+        <legend className={labelClass}>
+          {naaste ? "Waar zou je naaste hulp bij willen? (kies wat past)" : t.categorieLabel}
+        </legend>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {CATEGORIEEN.map((c) => {
             const actief = categorieen.includes(c);
@@ -181,7 +243,7 @@ export default function AanmeldForm({ rol }: Props) {
       {rol === "hulpvrager" && (
         <div>
           <label htmlFor="urgentie" className={labelClass}>
-            Hoe snel zou je hulp willen?
+            {naaste ? "Hoe snel is hulp gewenst?" : "Hoe snel zou je hulp willen?"}
           </label>
           <select id="urgentie" name="urgentie" className={inputClass} defaultValue="gemiddeld">
             <option value="laag">Geen haast</option>
@@ -240,13 +302,32 @@ export default function AanmeldForm({ rol }: Props) {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={status === "bezig"}
-        className="w-full rounded-xl bg-support px-6 py-4 text-xl font-bold text-white transition hover:opacity-90 disabled:opacity-60 sm:w-auto"
-      >
-        {status === "bezig" ? "Bezig met versturen…" : "Aanmelden"}
-      </button>
+      <div className="space-y-3">
+        <button
+          type="submit"
+          disabled={status === "bezig"}
+          className="w-full rounded-xl bg-support px-6 py-4 text-xl font-bold text-white transition hover:opacity-90 disabled:opacity-60"
+        >
+          {status === "bezig"
+            ? "Bezig met versturen…"
+            : rol === "hulpvrager"
+              ? "Verstuur mijn aanvraag"
+              : "Verstuur mijn aanmelding"}
+        </button>
+        <p className="text-center text-base text-muted">
+          Gratis en vrijblijvend. We nemen persoonlijk contact op, meestal
+          binnen één werkdag.
+        </p>
+        <p className="text-center text-base text-muted">
+          Liever even bellen?{" "}
+          <a
+            href="tel:+31612154010"
+            className="font-semibold text-support underline"
+          >
+            06 12154010
+          </a>
+        </p>
+      </div>
     </form>
   );
 }
