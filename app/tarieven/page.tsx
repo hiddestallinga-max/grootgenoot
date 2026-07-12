@@ -34,8 +34,7 @@ export default function Tarieven() {
         </p>
         <p>
           Daarbovenop rekenen wij een vaste servicebijdrage van € 4,00 per
-          uur. Geen percentages en geen variabele opslag: dit bedrag staat
-          vast, ongeacht het uurtarief van je grootgenoot of de hulpvraag.
+          uur.
         </p>
         <p>
           Waar die service voor is: de persoonlijke kennismaking en een

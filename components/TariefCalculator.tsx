@@ -104,8 +104,11 @@ export default function TariefCalculator() {
             <span className="font-semibold text-ink">{euro(tarief)}</span>
           </p>
           <p className="flex items-center justify-between gap-4">
-            <span className="text-muted">Vaste service per uur</span>
+            <span className="text-muted">Service per uur</span>
             <span className="font-semibold text-ink">{euro(service)}</span>
+          </p>
+          <p className="text-base text-muted">
+            Zonder service kan Grootgenoot niet draaiende blijven.
           </p>
         </div>
 
