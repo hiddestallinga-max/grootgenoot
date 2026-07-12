@@ -43,7 +43,7 @@ export default function Over() {
       <div className="space-y-6 text-xl leading-relaxed text-muted">
         <p>
           Daarom is er Grootgenoot. Wij koppelen ouderen aan grootgenoten:
-          mensen uit de buurt die helpen en gezelschap houden. Bewust privaat
+          mensen uit de buurt die ondersteunen en gezelschap houden. Bewust privaat
           en uit eigen portemonnee, zonder indicatie, zonder wachtlijst en
           zonder minimum aantal uren. Je betaalt alleen voor de hulp die je
           echt wilt.
@@ -73,7 +73,7 @@ export default function Over() {
           href="/groot-support/helpen"
           className="rounded-xl border border-support bg-white px-6 py-4 text-xl font-bold text-support transition hover:bg-support/5"
         >
-          Ik wil helpen
+          Ik wil ondersteunen
         </Link>
       </div>
     </main>

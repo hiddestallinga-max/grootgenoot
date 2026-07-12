@@ -25,7 +25,7 @@ export default function GrootSupport() {
           <h2 className="text-2xl font-bold text-ink">Ik zoek ondersteuning</h2>
           <p className="mt-2 text-lg leading-relaxed text-muted">
             Laat je gegevens achter en we nemen contact op om te kijken hoe we
-            kunnen helpen.
+            je kunnen ondersteunen.
           </p>
           <span className="mt-5 inline-flex items-center gap-2 text-lg font-semibold text-support">
             Aanmelden{" "}
@@ -40,7 +40,7 @@ export default function GrootSupport() {
             Ik wil iemand ondersteunen
           </h2>
           <p className="mt-2 text-lg leading-relaxed text-muted">
-            Word grootgenoot en help een oudere in de buurt.
+            Word grootgenoot en ondersteun een oudere in de buurt.
           </p>
           <span className="mt-5 inline-flex items-center gap-2 text-lg font-semibold text-support">
             Aanmelden{" "}

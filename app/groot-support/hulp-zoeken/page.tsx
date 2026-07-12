@@ -17,7 +17,7 @@ export default function HulpZoeken() {
       </h1>
       <p className="mt-5 mb-10 text-xl leading-relaxed text-muted">
         Laat je gegevens achter. We nemen persoonlijk contact met je op om te
-        kijken hoe we kunnen helpen, hoe klein de vraag ook is.
+        kijken hoe we je kunnen ondersteunen, hoe klein de vraag ook is.
       </p>
       <AanmeldForm rol="hulpvrager" />
     </main>

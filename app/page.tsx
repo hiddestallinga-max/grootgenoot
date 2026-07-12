@@ -1,3 +1,4 @@
+import Image from "next/image";
 import GlasKaart from "@/components/GlasKaart";
 
 /* Simpele lijn-iconen (zelfde stijl: dunne lijnen, afgeronde hoeken) */
@@ -79,36 +80,50 @@ const kleineTegels = [
 export default function Home() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
-      <header className="max-w-2xl">
-        <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
-          groot·ge·noot{" "}
-          <span className="text-2xl font-normal italic text-muted sm:text-3xl">
-            (de)
-          </span>
-        </h1>
-        <p className="mt-5 text-xl leading-relaxed text-muted">
-          Iemand uit de buurt die je helpt én gezelschap houdt. Thuis en op
-          pad.
-        </p>
-      </header>
-
-      <div className="mt-8 flex flex-wrap gap-4">
-        <GlasKaart
-          href="/groot-support/hulp-zoeken"
-          volgKracht={14}
-          kantelKracht={7}
-          className="bg-support/90 border-support/40 px-8 py-4"
-        >
-          <span className="text-xl font-bold text-white">Ik zoek hulp</span>
-        </GlasKaart>
-        <GlasKaart
-          href="/groot-support/helpen"
-          volgKracht={14}
-          kantelKracht={7}
-          className="px-8 py-4"
-        >
-          <span className="text-xl font-bold text-support">Ik wil helpen</span>
-        </GlasKaart>
+      <div className="grid items-center gap-10 lg:grid-cols-2">
+        <header>
+          <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
+            groot·ge·noot{" "}
+            <span className="text-2xl font-normal italic text-muted sm:text-3xl">
+              (de)
+            </span>
+          </h1>
+          <p className="mt-5 text-xl leading-relaxed text-muted">
+            Iemand uit de buurt die je ondersteunt én gezelschap houdt. Thuis
+            en op pad.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <GlasKaart
+              href="/groot-support/hulp-zoeken"
+              volgKracht={14}
+              kantelKracht={7}
+              className="bg-support/90 border-support/40 px-8 py-4"
+            >
+              <span className="text-xl font-bold text-white">Ik zoek hulp</span>
+            </GlasKaart>
+            <GlasKaart
+              href="/groot-support/helpen"
+              volgKracht={14}
+              kantelKracht={7}
+              className="px-8 py-4"
+            >
+              <span className="text-xl font-bold text-support">
+                Ik wil ondersteunen
+              </span>
+            </GlasKaart>
+          </div>
+        </header>
+        <div className="relative">
+          <Image
+            src="/hero.jpg"
+            alt="Een grootgenoot en een oudere drinken samen koffie en houden elkaars hand vast"
+            width={1889}
+            height={2600}
+            priority
+            sizes="(min-width: 1024px) 480px, 100vw"
+            className="h-72 w-full rounded-3xl object-cover object-center shadow-lg sm:h-96 lg:h-[480px]"
+          />
+        </div>
       </div>
 
       <section aria-label="Onderdelen" className="mt-12">
@@ -120,7 +135,7 @@ export default function Home() {
             <div className="min-w-0 flex-1">
               <h2 className="text-2xl font-bold text-ink">Groot Support</h2>
               <p className="mt-1 text-lg leading-relaxed text-muted">
-                De kern: vind ondersteuning, of word grootgenoot en help iemand
+                Vind ondersteuning, of word grootgenoot en ondersteun iemand
                 in de buurt.
               </p>
             </div>

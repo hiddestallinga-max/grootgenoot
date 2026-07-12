@@ -96,8 +96,8 @@ export default async function Uren({
         Uren doorgeven
       </h1>
       <p className="mt-5 mb-8 text-xl leading-relaxed text-muted">
-        Hallo {voornaam}! Vul hieronder in wanneer en hoe lang je hebt
-        geholpen. Na goedkeuring komen je uren op het maandoverzicht en worden
+        Hallo {voornaam}! Vul hieronder in wanneer en hoe lang je iemand hebt
+        ondersteund. Na goedkeuring komen je uren op het maandoverzicht en worden
         ze automatisch uitbetaald.
       </p>
 

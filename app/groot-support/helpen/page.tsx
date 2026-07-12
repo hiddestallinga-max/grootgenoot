@@ -16,7 +16,7 @@ export default function Helpen() {
         Ik wil iemand ondersteunen
       </h1>
       <p className="mt-5 mb-10 text-xl leading-relaxed text-muted">
-        Word grootgenoot en help een oudere in je buurt. Laat je gegevens
+        Word grootgenoot en ondersteun een oudere in je buurt. Laat je gegevens
         achter, dan bespreken we samen wat bij je past.
       </p>
       <AanmeldForm rol="grootgenoot" />
