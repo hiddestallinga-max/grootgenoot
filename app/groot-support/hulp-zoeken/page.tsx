@@ -1,7 +1,16 @@
 import Link from "next/link";
 import AanmeldForm from "@/components/AanmeldForm";
 
-export const metadata = { title: "Ik zoek ondersteuning | Grootgenoot" };
+const titel = "Ik zoek ondersteuning | Grootgenoot";
+const beschrijving =
+  "Zoek je ondersteuning of gezelschap? Meld je aan en we koppelen je aan een betrouwbare grootgenoot uit de buurt.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/groot-support/hulp-zoeken" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function HulpZoeken() {
   return (

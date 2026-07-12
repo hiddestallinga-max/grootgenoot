@@ -5,7 +5,10 @@ import WijzigForm from "@/components/WijzigForm";
 import { STATUS_LABELS, type Aanmelding, type Status } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Mijn aanmelding | Grootgenoot" };
+export const metadata = {
+  title: "Mijn gegevens wijzigen | Grootgenoot",
+  robots: { index: false, follow: false },
+};
 
 const STATUS_UITLEG: Record<Status, string> = {
   nieuw: "We hebben je aanmelding ontvangen en nemen binnenkort contact met je op.",

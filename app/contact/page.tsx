@@ -1,7 +1,16 @@
 import Link from "next/link";
 import ContactForm from "@/components/ContactForm";
 
-export const metadata = { title: "Contact | Grootgenoot" };
+const titel = "Contact | Grootgenoot";
+const beschrijving =
+  "Vragen of even overleggen? Bel of mail Grootgenoot, of stuur een bericht via het contactformulier.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/contact" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function Contact() {
   return (

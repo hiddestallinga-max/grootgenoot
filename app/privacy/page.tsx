@@ -1,6 +1,15 @@
 import Link from "next/link";
 
-export const metadata = { title: "Privacyverklaring | Grootgenoot" };
+const titel = "Privacyverklaring | Grootgenoot";
+const beschrijving =
+  "Hoe Grootgenoot omgaat met je persoonsgegevens: welke gegevens we verwerken, waarvoor, hoe lang we ze bewaren en welke rechten je hebt.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/privacy" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function Privacy() {
   return (

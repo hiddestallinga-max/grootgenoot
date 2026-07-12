@@ -4,7 +4,10 @@ import { leesWijzigToken } from "@/lib/wijzigToken";
 import UrenForm from "@/components/UrenForm";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Uren doorgeven | Grootgenoot" };
+export const metadata = {
+  title: "Uren doorgeven | Grootgenoot",
+  robots: { index: false, follow: false },
+};
 
 const STATUS_TEKST: Record<string, string> = {
   ingediend: "Wacht op goedkeuring",

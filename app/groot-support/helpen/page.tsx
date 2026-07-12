@@ -1,7 +1,16 @@
 import Link from "next/link";
 import AanmeldForm from "@/components/AanmeldForm";
 
-export const metadata = { title: "Ik wil iemand ondersteunen | Grootgenoot" };
+const titel = "Ik wil iemand ondersteunen | Grootgenoot";
+const beschrijving =
+  "Word grootgenoot: ondersteun een oudere bij jou in de buurt met hulp en gezelschap, als zelfstandige met een eerlijk uurtarief.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/groot-support/helpen" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function Helpen() {
   return (

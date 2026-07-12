@@ -1,7 +1,16 @@
 import Link from "next/link";
 import GlasKaart from "@/components/GlasKaart";
 
-export const metadata = { title: "Groot Support | Grootgenoot" };
+const titel = "Groot Support | Grootgenoot";
+const beschrijving =
+  "Vind ondersteuning, of word grootgenoot en ondersteun een oudere bij jou in de buurt met hulp en gezelschap.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/groot-support" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function GrootSupport() {
   return (

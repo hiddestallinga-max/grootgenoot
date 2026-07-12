@@ -1,6 +1,15 @@
 import Link from "next/link";
 
-export const metadata = { title: "Over Grootgenoot | Onze visie" };
+const titel = "Over Grootgenoot | Onze visie";
+const beschrijving =
+  "Waarom Grootgenoot bestaat: door de vergrijzing is er meer behoefte aan hulp en gezelschap dan de zorg aankan. Wij koppelen ouderen aan mensen uit de buurt.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/over" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function Over() {
   return (

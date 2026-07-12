@@ -11,6 +11,9 @@ export default function SiteFooter() {
           <Link href="/tarieven" className="underline hover:text-white">
             Tarieven
           </Link>
+          <Link href="/werkgebied" className="underline hover:text-white">
+            Werkgebied
+          </Link>
           <Link href="/contact" className="underline hover:text-white">
             Contact
           </Link>

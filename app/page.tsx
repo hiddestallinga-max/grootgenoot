@@ -1,5 +1,49 @@
 import Image from "next/image";
+import Link from "next/link";
 import GlasKaart from "@/components/GlasKaart";
+import JsonLd from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/site";
+
+const localBusiness = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE_URL}/#grootgenoot`,
+  name: "Grootgenoot",
+  url: SITE_URL,
+  email: "info@grootgenoot.nl",
+  telephone: "+31612154010",
+  image: `${SITE_URL}/og.png`,
+  logo: `${SITE_URL}/grootgenoot-logo.svg`,
+  description:
+    "Grootgenoot koppelt ouderen aan iemand uit de buurt voor hulp en gezelschap, thuis en op pad. Betrouwbaar, met VOG en één vast aanspreekpunt.",
+  priceRange: "€€",
+  vatID: "NL005497451B95",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "De Steeg",
+    addressRegion: "Gelderland",
+    addressCountry: "NL",
+  },
+  areaServed: [
+    "Arnhem",
+    "Nijmegen",
+    "Velp",
+    "Rheden",
+    "De Steeg",
+    "Ellecom",
+    "Dieren",
+    "Spankeren",
+    "Rozendaal",
+    "Oosterbeek",
+    "Renkum",
+    "Elst",
+    "Huissen",
+    "Bemmel",
+    "Duiven",
+    "Westervoort",
+    "Zevenaar",
+  ].map((naam) => ({ "@type": "City", name: naam })),
+};
 
 /* Simpele lijn-iconen (zelfde stijl: dunne lijnen, afgeronde hoeken) */
 function IcoonSupport() {
@@ -88,6 +132,7 @@ const kleineTegels = [
 export default function Home() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
+      <JsonLd data={localBusiness} />
       <div className="grid items-center gap-10 lg:grid-cols-2">
         <header>
           <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
@@ -120,6 +165,13 @@ export default function Home() {
               </span>
             </GlasKaart>
           </div>
+          <p className="mt-6 text-base text-muted">
+            Actief in de regio Arnhem–Nijmegen en omstreken.{" "}
+            <Link href="/werkgebied" className="font-semibold text-support underline">
+              Bekijk het werkgebied
+            </Link>
+            .
+          </p>
         </header>
         <div className="relative">
           <Image

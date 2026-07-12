@@ -1,11 +1,69 @@
 import Link from "next/link";
 import TariefCalculator from "@/components/TariefCalculator";
+import JsonLd from "@/components/JsonLd";
 
-export const metadata = { title: "Tarieven | Grootgenoot" };
+const faq = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Wat kost hulp van een grootgenoot?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Je grootgenoot ontvangt het volledige uurtarief, meestal tussen de € 25 en € 35, in overleg met jou bepaald. Daarbovenop komt een vaste servicebijdrage van € 4,00 per uur.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Zijn er inschrijf- of matchkosten?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Nee. Je betaalt geen inschrijfkosten, geen matchkosten, geen minimum aantal uren en er is geen opzegtermijn. De eerste kennismaking is gratis en vrijblijvend.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Worden er reiskosten gerekend?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Alleen als je grootgenoot voor je reist: € 0,23 per kilometer, het wettelijke onbelaste tarief. Deze vergoeding gaat volledig naar je grootgenoot en staat apart op je maandoverzicht.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Hoe betaal ik?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Je betaalt één keer per maand in één bedrag via automatische incasso. Vooraf krijg je per e-mail een overzicht van de gewerkte uren. Het uurdeel gaat rechtstreeks naar je grootgenoot, het servicedeel naar het platform.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is de grootgenoot gescreend?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Elke grootgenoot heeft een eigen KvK-inschrijving, een aansprakelijkheidsverzekering en een recente verklaring omtrent gedrag (VOG).",
+      },
+    },
+  ],
+};
+
+const titel = "Tarieven | Grootgenoot";
+const beschrijving =
+  "Transparante tarieven: het uurtarief gaat volledig naar je grootgenoot, plus een vaste service van € 4,00 per uur. Geen inschrijf- of matchkosten. Reken het zelf uit.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/tarieven" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function Tarieven() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-12 sm:py-16">
+      <JsonLd data={faq} />
       <Link
         href="/"
         className="mb-8 inline-flex items-center gap-2 text-lg font-semibold text-support"

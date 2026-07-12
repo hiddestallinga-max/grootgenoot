@@ -2,11 +2,39 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { SITE_URL } from "@/lib/site";
+
+const beschrijving =
+  "Grootgenoot koppelt ouderen aan iemand uit de buurt voor hulp en gezelschap, thuis en op pad. Betrouwbaar, met VOG en één vast aanspreekpunt.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Grootgenoot | Hulp en gezelschap uit de buurt",
-  description:
-    "Hulp en gezelschap voor ouderen, thuis en buitenshuis, van mensen uit de buurt. Onze aanpak voor vergrijzing.",
+  description: beschrijving,
+  applicationName: "Grootgenoot",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "nl_NL",
+    siteName: "Grootgenoot",
+    url: SITE_URL,
+    title: "Grootgenoot | Hulp en gezelschap uit de buurt",
+    description: beschrijving,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Grootgenoot — hulp en gezelschap uit de buurt",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Grootgenoot | Hulp en gezelschap uit de buurt",
+    description: beschrijving,
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({

@@ -1,7 +1,16 @@
 import Link from "next/link";
 import LinkAanvraagForm from "@/components/LinkAanvraagForm";
 
-export const metadata = { title: "Mijn aanmelding | Grootgenoot" };
+const titel = "Mijn aanmelding | Grootgenoot";
+const beschrijving =
+  "Bekijk de status van je aanmelding, wijzig je gegevens of meld je af via een beveiligde link. Geen wachtwoord nodig.";
+
+export const metadata = {
+  title: titel,
+  description: beschrijving,
+  alternates: { canonical: "/groot-support/mijn-aanmelding" },
+  openGraph: { title: titel, description: beschrijving },
+};
 
 export default function MijnAanmelding() {
   return (
