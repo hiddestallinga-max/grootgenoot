@@ -48,7 +48,7 @@ export default function SiteFooter() {
         <div className="mt-8 flex flex-wrap gap-x-6 gap-y-1 border-t border-white/15 pt-6 text-sm text-white/60">
           <span>KvK 42103745</span>
           <span>BTW NL005497451B95</span>
-          <span>IBAN: NL59 ASNB 0708 8601 92 t.n.v. Hidde Stallinga</span>
+          <span>IBAN: NL59 ASNB 0708 8601 92</span>
           <span>De Steeg</span>
         </div>
       </div>
