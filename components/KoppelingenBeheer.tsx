@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SERVICE_CENT_PER_UUR } from "@/lib/tarieven";
 
 export type UrenRij = {
   id: string;
@@ -15,7 +16,6 @@ export type UrenRij = {
 export type KoppelingView = {
   id: string;
   uurtarief_cent: number;
-  service_pct: number;
   actief: boolean;
   hulpvrager: { id: string; naam: string; machtiging: boolean };
   grootgenoot: { id: string; naam: string; onboarded: boolean };
@@ -71,7 +71,6 @@ export default function KoppelingenBeheer({
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const tariefEuro = Number(String(form.get("tarief") ?? "30").replace(",", "."));
-    const servicePct = Number(String(form.get("service") ?? "15").replace(",", "."));
     await roep(
       "/api/admin/koppeling",
       {
@@ -79,7 +78,6 @@ export default function KoppelingenBeheer({
         hulpvrager_id: String(form.get("hulpvrager") ?? ""),
         grootgenoot_id: String(form.get("grootgenoot") ?? ""),
         uurtarief_cent: Math.round(tariefEuro * 100),
-        service_pct: servicePct,
       },
       "nieuw",
     );
@@ -147,22 +145,6 @@ export default function KoppelingenBeheer({
             className={`${inputClass} w-24`}
           />
         </div>
-        <div>
-          <label htmlFor="service" className="block text-sm font-semibold text-muted">
-            Service %
-          </label>
-          <input
-            id="service"
-            name="service"
-            type="number"
-            min={0}
-            max={50}
-            step="0.5"
-            defaultValue={15}
-            required
-            className={`${inputClass} w-20`}
-          />
-        </div>
         <button
           type="submit"
           disabled={bezig !== null || hulpvragers.length === 0 || grootgenoten.length === 0}
@@ -182,7 +164,7 @@ export default function KoppelingenBeheer({
           const goedMinuten = goedgekeurd.reduce((s, u) => s + u.minuten, 0);
           const goedKm = goedgekeurd.reduce((s, u) => s + Number(u.km ?? 0), 0);
           const urenCent = Math.round((goedMinuten / 60) * k.uurtarief_cent);
-          const serviceCent = Math.round((urenCent * k.service_pct) / 100);
+          const serviceCent = Math.round((goedMinuten / 60) * SERVICE_CENT_PER_UUR);
           const reisCent = Math.round(goedKm * 23);
           const klaarVoorIncasso =
             goedgekeurd.length > 0 &&
@@ -201,27 +183,8 @@ export default function KoppelingenBeheer({
                   {k.grootgenoot.naam}
                 </h3>
                 <span className="flex items-center gap-2 text-sm font-semibold text-muted">
-                  {euro(k.uurtarief_cent)}/uur +
-                  <input
-                    type="number"
-                    min={0}
-                    max={50}
-                    step="0.5"
-                    defaultValue={k.service_pct}
-                    aria-label="Servicepercentage"
-                    onBlur={(e) => {
-                      const nieuwPct = Number(e.target.value.replace(",", "."));
-                      if (Number.isFinite(nieuwPct) && nieuwPct !== k.service_pct) {
-                        roep(
-                          "/api/admin/koppeling",
-                          { actie: "service", id: k.id, service_pct: nieuwPct },
-                          "service",
-                        );
-                      }
-                    }}
-                    className="w-16 rounded-lg border border-black/15 bg-white px-2 py-0.5 text-sm text-ink focus:border-support"
-                  />
-                  % service
+                  {euro(k.uurtarief_cent)}/uur + {euro(SERVICE_CENT_PER_UUR)}/uur
+                  service
                   <button
                     onClick={() => {
                       if (

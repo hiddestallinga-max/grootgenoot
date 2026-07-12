@@ -20,7 +20,6 @@ type PersoonKort = {
 type KoppelingRuw = {
   id: string;
   uurtarief_cent: number;
-  service_pct: number;
   actief: boolean;
   hulpvrager: PersoonKort | null;
   grootgenoot: PersoonKort | null;
@@ -52,7 +51,7 @@ export default async function AdminPage() {
   const { data: koppelingenData } = await supabaseAdmin
     .from("koppelingen")
     .select(
-      "id, uurtarief_cent, service_pct, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), uren(id, datum, minuten, km, omschrijving, status)",
+      "id, uurtarief_cent, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(id, voornaam, achternaam, stripe_onboarded, stripe_machtiging), uren(id, datum, minuten, km, omschrijving, status)",
     )
     .order("created_at", { ascending: false });
 
@@ -61,7 +60,6 @@ export default async function AdminPage() {
   ).map((k) => ({
     id: k.id,
     uurtarief_cent: k.uurtarief_cent,
-    service_pct: Number(k.service_pct),
     actief: k.actief,
     hulpvrager: {
       id: k.hulpvrager?.id ?? "",

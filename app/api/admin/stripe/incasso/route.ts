@@ -3,7 +3,11 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripe, isStripeGeconfigureerd, euroTekst } from "@/lib/stripe";
 import { stuurMail, eigenaarEmail } from "@/lib/email";
-import { reiskostenCent, REISKOSTEN_CENT_PER_KM } from "@/lib/tarieven";
+import {
+  reiskostenCent,
+  REISKOSTEN_CENT_PER_KM,
+  SERVICE_CENT_PER_UUR,
+} from "@/lib/tarieven";
 
 // Start de maandincasso voor één koppeling: telt de goedgekeurde uren op,
 // mailt de cliënt het overzicht en maakt één SEPA-incasso aan die Stripe
@@ -46,7 +50,7 @@ export async function POST(request: Request) {
   const { data: kop } = await supabaseAdmin
     .from("koppelingen")
     .select(
-      "id, uurtarief_cent, service_pct, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(*), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(*)",
+      "id, uurtarief_cent, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(*), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(*)",
     )
     .eq("id", parsed.data.koppeling_id)
     .single();
@@ -86,9 +90,11 @@ export async function POST(request: Request) {
   }
 
   const totaalMinuten = uren.reduce((som, u) => som + u.minuten, 0);
+  const totaalUren = totaalMinuten / 60;
   const totaalKm = uren.reduce((som, u) => som + Number(u.km ?? 0), 0);
-  const urenCent = Math.round((totaalMinuten / 60) * kop.uurtarief_cent);
-  const serviceCent = Math.round((urenCent * Number(kop.service_pct)) / 100);
+  const urenCent = Math.round(totaalUren * kop.uurtarief_cent);
+  // Vaste servicebijdrage van € 4,00 per gewerkt uur (geen percentage).
+  const serviceCent = Math.round(totaalUren * SERVICE_CENT_PER_UUR);
   // Reiskostenvergoeding gaat volledig naar de grootgenoot: geen service erover.
   const reisCent = reiskostenCent(totaalKm);
   const totaalCent = urenCent + serviceCent + reisCent;
@@ -161,7 +167,7 @@ export async function POST(request: Request) {
         ? `\nReiskosten (${totaalKm.toLocaleString("nl-NL")} km x ${euroTekst(REISKOSTEN_CENT_PER_KM)}): ${euroTekst(reisCent)}`
         : "";
 
-    const overzicht = `Uren van ${grootgenoot.voornaam} ${grootgenoot.achternaam} (${periode}):\n${regels}\n\nUren (${(totaalMinuten / 60).toLocaleString("nl-NL")} uur x ${euroTekst(kop.uurtarief_cent)}): ${euroTekst(urenCent)}\nService Grootgenoot (${kop.service_pct}%): ${euroTekst(serviceCent)}${reisRegel}\nTotaal: ${euroTekst(totaalCent)}`;
+    const overzicht = `Uren van ${grootgenoot.voornaam} ${grootgenoot.achternaam} (${periode}):\n${regels}\n\nUren (${totaalUren.toLocaleString("nl-NL")} uur x ${euroTekst(kop.uurtarief_cent)}): ${euroTekst(urenCent)}\nService (${totaalUren.toLocaleString("nl-NL")} uur x ${euroTekst(SERVICE_CENT_PER_UUR)}): ${euroTekst(serviceCent)}${reisRegel}\nTotaal: ${euroTekst(totaalCent)}`;
 
     await Promise.allSettled([
       stuurMail({

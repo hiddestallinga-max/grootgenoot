@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { REISKOSTEN_CENT_PER_KM } from "@/lib/tarieven";
+import { REISKOSTEN_CENT_PER_KM, SERVICE_CENT_PER_UUR } from "@/lib/tarieven";
 
 const REIS_PER_KM = REISKOSTEN_CENT_PER_KM / 100; // € 0,23
+const SERVICE_PER_UUR = SERVICE_CENT_PER_UUR / 100; // € 4,00
 
 function euro(bedrag: number): string {
   return bedrag.toLocaleString("nl-NL", {
@@ -17,10 +18,9 @@ function euro(bedrag: number): string {
 export default function TariefCalculator() {
   const [tarief, setTarief] = useState(30);
   const [uren, setUren] = useState(2);
-  const [servicePct, setServicePct] = useState(15);
   const [km, setKm] = useState(0);
 
-  const service = (tarief * servicePct) / 100;
+  const service = SERVICE_PER_UUR;
   const perUur = tarief + service;
   // Reiskosten: geen service hierover.
   const reisPerMaand = km * REIS_PER_KM * 4.33;
@@ -49,8 +49,8 @@ export default function TariefCalculator() {
             className="schuif mt-2"
           />
           <p className="mt-1 text-base text-muted">
-            De grootgenoot bepaalt dit zelf, meestal tussen {euro(25)} en{" "}
-            {euro(35)}.
+            De grootgenoot bepaalt dit bedrag in overleg met jou, meestal is
+            dit tussen {euro(25)} en {euro(35)}.
           </p>
         </div>
 
@@ -73,29 +73,6 @@ export default function TariefCalculator() {
             onChange={(e) => setUren(Number(e.target.value))}
             className="schuif mt-2"
           />
-        </div>
-
-        <div>
-          <div className="flex items-baseline justify-between gap-4">
-            <label htmlFor="service" className="text-lg font-semibold text-ink">
-              Servicepercentage
-            </label>
-            <span className="text-lg font-bold text-support">{servicePct}%</span>
-          </div>
-          <input
-            id="service"
-            type="range"
-            min={10}
-            max={20}
-            step={1}
-            value={servicePct}
-            onChange={(e) => setServicePct(Number(e.target.value))}
-            className="schuif mt-2"
-          />
-          <p className="mt-1 text-base text-muted">
-            10 tot 20%, afhankelijk van de hulpvraag. We spreken dit vooraf
-            met je af.
-          </p>
         </div>
 
         <div>
@@ -127,7 +104,7 @@ export default function TariefCalculator() {
             <span className="font-semibold text-ink">{euro(tarief)}</span>
           </p>
           <p className="flex items-center justify-between gap-4">
-            <span className="text-muted">Service ({servicePct}%)</span>
+            <span className="text-muted">Vaste service per uur</span>
             <span className="font-semibold text-ink">{euro(service)}</span>
           </p>
         </div>

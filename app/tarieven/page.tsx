@@ -33,13 +33,9 @@ export default function Tarieven() {
           bepaalt de grootgenoot zelf, in overleg met jou.
         </p>
         <p>
-          Daarbovenop rekenen wij 10 tot 20% service, afhankelijk van de
-          hulpvraag. Bij een lichte hulpvraag, zoals gezelschap of samen
-          boodschappen doen, zit je aan de onderkant. Vraagt de situatie om
-          meer coördinatie, bijvoorbeeld bij vergeetachtigheid, meerdere
-          hulpmomenten per week of afstemming met familie en huisarts, dan
-          ligt het percentage hoger. We spreken het vooraf met je af en het
-          blijft gelijk zolang de koppeling loopt.
+          Daarbovenop rekenen wij een vaste servicebijdrage van € 4,00 per
+          uur. Geen percentages en geen variabele opslag: dit bedrag staat
+          vast, ongeacht het uurtarief van je grootgenoot of de hulpvraag.
         </p>
         <p>
           Waar die service voor is: de persoonlijke kennismaking en een
@@ -54,8 +50,8 @@ export default function Tarieven() {
           Reist je grootgenoot voor jou, bijvoorbeeld om je ergens naartoe te
           brengen, dan komt daar een reiskostenvergoeding bij van € 0,23 per
           kilometer. Dat is het wettelijke onbelaste tarief. Deze vergoeding
-          gaat volledig naar je grootgenoot, er zit geen servicepercentage op,
-          en de gereden kilometers staan apart op je maandoverzicht. Blijft de
+          gaat volledig naar je grootgenoot, er zit geen service op, en de
+          gereden kilometers staan apart op je maandoverzicht. Blijft de
           hulp bij jou thuis, dan betaal je hier niets voor.
         </p>
         <p>

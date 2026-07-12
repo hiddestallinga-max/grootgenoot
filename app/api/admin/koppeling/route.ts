@@ -8,14 +8,8 @@ const schema = z.discriminatedUnion("actie", [
     hulpvrager_id: z.string().uuid(),
     grootgenoot_id: z.string().uuid(),
     uurtarief_cent: z.number().int().min(1000).max(10000),
-    service_pct: z.number().min(0).max(50).default(18),
   }),
   z.object({ actie: z.literal("verwijder"), id: z.string().uuid() }),
-  z.object({
-    actie: z.literal("service"),
-    id: z.string().uuid(),
-    service_pct: z.number().min(0).max(50),
-  }),
 ]);
 
 export async function POST(request: Request) {
@@ -37,7 +31,6 @@ export async function POST(request: Request) {
       hulpvrager_id: d.hulpvrager_id,
       grootgenoot_id: d.grootgenoot_id,
       uurtarief_cent: d.uurtarief_cent,
-      service_pct: d.service_pct,
     });
     if (error) {
       console.error("Koppeling-fout:", error.message);
@@ -46,26 +39,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  if (d.actie === "verwijder") {
-    // Uren en facturen van deze koppeling verdwijnen mee (on delete cascade).
-    const { error } = await supabaseAdmin
-      .from("koppelingen")
-      .delete()
-      .eq("id", d.id);
-    if (error) {
-      console.error("Koppeling-verwijderfout:", error.message);
-      return NextResponse.json({ error: "Verwijderen mislukt" }, { status: 500 });
-    }
-    return NextResponse.json({ ok: true });
-  }
-
+  // d.actie === "verwijder"
+  // Uren en facturen van deze koppeling verdwijnen mee (on delete cascade).
   const { error } = await supabaseAdmin
     .from("koppelingen")
-    .update({ service_pct: d.service_pct })
+    .delete()
     .eq("id", d.id);
   if (error) {
-    console.error("Service-pct-fout:", error.message);
-    return NextResponse.json({ error: "Opslaan mislukt" }, { status: 500 });
+    console.error("Koppeling-verwijderfout:", error.message);
+    return NextResponse.json({ error: "Verwijderen mislukt" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 }
