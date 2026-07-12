@@ -61,6 +61,25 @@ export default function AdminDashboard({
     }
   }
 
+  async function verwijderAanmelding(a: Aanmelding) {
+    const zeker = window.confirm(
+      `${a.voornaam} ${a.achternaam} definitief verwijderen? Ook eventuele koppelingen, uren en factuurhistorie verdwijnen.`,
+    );
+    if (!zeker) return;
+    const res = await fetch("/api/admin/aanmelding", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: a.id }),
+    });
+    if (res.ok) {
+      setItems((prev) => prev.filter((x) => x.id !== a.id));
+      setOpslaanFout(null);
+      router.refresh();
+    } else {
+      setOpslaanFout("Verwijderen mislukt. Probeer het opnieuw.");
+    }
+  }
+
   async function uitloggen() {
     await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
@@ -183,15 +202,24 @@ export default function AdminDashboard({
                   {a.rol === "hulpvrager" && a.urgentie ? ` · urgentie: ${a.urgentie}` : ""}
                 </p>
               </div>
-              <select
-                value={a.status}
-                onChange={(e) => updateVeld(a.id, { status: e.target.value as Status })}
-                className={`rounded-full border-0 px-3 py-1.5 text-sm font-semibold ${statusKleur[a.status]}`}
-              >
-                {STATUS_VOLGORDE.map((s) => (
-                  <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-                ))}
-              </select>
+              <span className="flex items-center gap-2">
+                <select
+                  value={a.status}
+                  onChange={(e) => updateVeld(a.id, { status: e.target.value as Status })}
+                  className={`rounded-full border-0 px-3 py-1.5 text-sm font-semibold ${statusKleur[a.status]}`}
+                >
+                  {STATUS_VOLGORDE.map((s) => (
+                    <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => verwijderAanmelding(a)}
+                  title="Aanmelding definitief verwijderen"
+                  className="rounded-full border border-red-700/30 px-3 py-1.5 text-sm font-semibold text-red-700 transition hover:border-red-700"
+                >
+                  Verwijder
+                </button>
+              </span>
             </div>
 
             <div className="mt-3 grid gap-x-6 gap-y-1 text-base text-muted sm:grid-cols-2">

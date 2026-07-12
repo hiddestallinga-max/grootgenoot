@@ -70,12 +70,15 @@ export default function KoppelingenBeheer({
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const tariefEuro = Number(String(form.get("tarief") ?? "30").replace(",", "."));
+    const servicePct = Number(String(form.get("service") ?? "18").replace(",", "."));
     await roep(
       "/api/admin/koppeling",
       {
+        actie: "nieuw",
         hulpvrager_id: String(form.get("hulpvrager") ?? ""),
         grootgenoot_id: String(form.get("grootgenoot") ?? ""),
         uurtarief_cent: Math.round(tariefEuro * 100),
+        service_pct: servicePct,
       },
       "nieuw",
     );
@@ -143,6 +146,22 @@ export default function KoppelingenBeheer({
             className={`${inputClass} w-24`}
           />
         </div>
+        <div>
+          <label htmlFor="service" className="block text-sm font-semibold text-muted">
+            Service %
+          </label>
+          <input
+            id="service"
+            name="service"
+            type="number"
+            min={0}
+            max={50}
+            step="0.5"
+            defaultValue={18}
+            required
+            className={`${inputClass} w-20`}
+          />
+        </div>
         <button
           type="submit"
           disabled={bezig !== null || hulpvragers.length === 0 || grootgenoten.length === 0}
@@ -178,8 +197,47 @@ export default function KoppelingenBeheer({
                   <span className="font-normal text-muted">krijgt hulp van</span>{" "}
                   {k.grootgenoot.naam}
                 </h3>
-                <span className="text-sm font-semibold text-muted">
-                  {euro(k.uurtarief_cent)}/uur + {k.service_pct}% service
+                <span className="flex items-center gap-2 text-sm font-semibold text-muted">
+                  {euro(k.uurtarief_cent)}/uur +
+                  <input
+                    type="number"
+                    min={0}
+                    max={50}
+                    step="0.5"
+                    defaultValue={k.service_pct}
+                    aria-label="Servicepercentage"
+                    onBlur={(e) => {
+                      const nieuwPct = Number(e.target.value.replace(",", "."));
+                      if (Number.isFinite(nieuwPct) && nieuwPct !== k.service_pct) {
+                        roep(
+                          "/api/admin/koppeling",
+                          { actie: "service", id: k.id, service_pct: nieuwPct },
+                          "service",
+                        );
+                      }
+                    }}
+                    className="w-16 rounded-lg border border-black/15 bg-white px-2 py-0.5 text-sm text-ink focus:border-support"
+                  />
+                  % service
+                  <button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          "Koppeling verwijderen? De bijbehorende uren en factuurhistorie verdwijnen ook.",
+                        )
+                      ) {
+                        roep(
+                          "/api/admin/koppeling",
+                          { actie: "verwijder", id: k.id },
+                          "verwijder",
+                        );
+                      }
+                    }}
+                    disabled={bezig !== null}
+                    className="rounded-lg border border-red-700/30 px-2 py-0.5 text-sm font-semibold text-red-700 transition hover:border-red-700 disabled:opacity-50"
+                  >
+                    Verwijder
+                  </button>
                 </span>
               </div>
 
