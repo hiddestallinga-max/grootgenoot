@@ -17,7 +17,7 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-ink/10 bg-white/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-1.5 sm:px-6">
         <Link
           href="/"
           aria-label="Grootgenoot, naar de startpagina"
@@ -25,12 +25,12 @@ export default function SiteHeader() {
           onClick={() => setOpen(false)}
         >
           <Image
-            src="/grootgenoot-logo.svg"
+            src="/grootgenoot-logo-zonder-de.svg"
             alt="Grootgenoot"
-            width={316}
-            height={92}
+            width={344}
+            height={90}
             priority
-            className="h-9 w-auto sm:h-10"
+            className="h-12 w-auto sm:h-14"
           />
         </Link>
 
