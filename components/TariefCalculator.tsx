@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { REISKOSTEN_CENT_PER_KM } from "@/lib/tarieven";
+
+const REIS_PER_KM = REISKOSTEN_CENT_PER_KM / 100; // € 0,23
 
 function euro(bedrag: number): string {
   return bedrag.toLocaleString("nl-NL", {
@@ -15,10 +18,13 @@ export default function TariefCalculator() {
   const [tarief, setTarief] = useState(30);
   const [uren, setUren] = useState(2);
   const [servicePct, setServicePct] = useState(15);
+  const [km, setKm] = useState(0);
 
   const service = (tarief * servicePct) / 100;
   const perUur = tarief + service;
-  const perMaand = perUur * uren * 4.33;
+  // Reiskosten: geen service hierover.
+  const reisPerMaand = km * REIS_PER_KM * 4.33;
+  const perMaand = perUur * uren * 4.33 + reisPerMaand;
 
   return (
     <div className="glas p-7">
@@ -92,6 +98,29 @@ export default function TariefCalculator() {
           </p>
         </div>
 
+        <div>
+          <div className="flex items-baseline justify-between gap-4">
+            <label htmlFor="km" className="text-lg font-semibold text-ink">
+              Reiskilometers per week
+            </label>
+            <span className="text-lg font-bold text-support">{km} km</span>
+          </div>
+          <input
+            id="km"
+            type="range"
+            min={0}
+            max={50}
+            step={1}
+            value={km}
+            onChange={(e) => setKm(Number(e.target.value))}
+            className="schuif mt-2"
+          />
+          <p className="mt-1 text-base text-muted">
+            Alleen als je grootgenoot voor je reist: {euro(REIS_PER_KM)} per
+            kilometer. Hier rekenen we geen service over.
+          </p>
+        </div>
+
         <div className="space-y-1 border-t border-ink/10 pt-4 text-lg">
           <p className="flex items-center justify-between gap-4">
             <span className="text-muted">Voor je grootgenoot</span>
@@ -108,8 +137,22 @@ export default function TariefCalculator() {
             <span className="font-semibold text-ink">Per uur betaal je</span>
             <span className="text-2xl font-bold text-ink">{euro(perUur)}</span>
           </p>
+          {km > 0 && (
+            <p className="mt-1 flex items-baseline justify-between gap-4 text-lg text-muted">
+              <span>
+                Reiskosten ({km} km/week × {euro(REIS_PER_KM)}) per maand
+              </span>
+              <span className="font-semibold">
+                {euro(Math.round(reisPerMaand))}
+              </span>
+            </p>
+          )}
           <p className="mt-1 flex items-baseline justify-between gap-4 text-lg text-muted">
-            <span>Bij {uren} uur per week is dat per maand ongeveer</span>
+            <span>
+              {km > 0
+                ? `Samen per maand (${uren} uur hulp + reiskosten) ongeveer`
+                : `Bij ${uren} uur per week is dat per maand ongeveer`}
+            </span>
             <span className="font-semibold">{euro(Math.round(perMaand))}</span>
           </p>
         </div>

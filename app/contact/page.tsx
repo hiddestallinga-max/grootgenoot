@@ -31,6 +31,15 @@ export default function Contact() {
             info@grootgenoot.nl
           </a>
         </p>
+        <p className="mt-2 text-lg">
+          <span className="font-semibold text-ink">Telefoon:</span>{" "}
+          <a
+            href="tel:+31612154010"
+            className="font-semibold text-support underline"
+          >
+            06 12154010
+          </a>
+        </p>
         <p className="mt-3 text-base text-muted">
           KvK 42103745 · BTW NL005497451B95 · IBAN: NL59 ASNB 0708 8601 92
         </p>
