@@ -26,7 +26,7 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Grootgenoot — hulp en gezelschap uit de buurt",
+        alt: "Grootgenoot, hulp en gezelschap uit de buurt",
       },
     ],
   },
@@ -68,7 +68,7 @@ export default function RootLayout({
         <div className="flex-1">{children}</div>
         <SiteFooter />
         {/* Ruimte zodat de vaste mobiele balk de footer niet bedekt. */}
-        <div aria-hidden="true" className="h-20 lg:hidden" />
+        <div aria-hidden="true" className="h-14 lg:hidden" />
         <StickyCTA />
       </body>
     </html>

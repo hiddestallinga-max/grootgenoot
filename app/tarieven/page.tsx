@@ -43,7 +43,7 @@ const faq = {
       name: "Is de grootgenoot gescreend?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Elke grootgenoot heeft een eigen KvK-inschrijving, een aansprakelijkheidsverzekering en een recente verklaring omtrent gedrag (VOG).",
+        text: "Elke grootgenoot is zorgvuldig geselecteerd, met een recente verklaring omtrent gedrag (VOG) en referenties.",
       },
     },
   ],
@@ -86,9 +86,8 @@ export default function Tarieven() {
       <h2 className="mt-12 text-2xl font-bold text-ink">Waar je geld heengaat</h2>
       <div className="mt-4 space-y-4 text-xl leading-relaxed text-muted">
         <p>
-          Je grootgenoot is zelfstandig ondernemer en ontvangt zijn of haar
-          volledige uurtarief, meestal tussen de 25 en 35 euro. Dat tarief
-          bepaalt de grootgenoot zelf, in overleg met jou.
+          Je grootgenoot ontvangt het volledige uurtarief, meestal tussen de
+          25 en 35 euro. Dat tarief spreek je samen af.
         </p>
         <p>
           Daarbovenop rekenen wij een vaste servicebijdrage van € 4,00 per
@@ -135,10 +134,10 @@ export default function Tarieven() {
       </h2>
       <div className="mt-4 space-y-4 text-xl leading-relaxed text-muted">
         <p>
-          Je grootgenoot werkt als zelfstandige rechtstreeks voor jou; wij
-          bemiddelen, ondersteunen en blijven bereikbaar. Elke grootgenoot
-          heeft een eigen KvK-inschrijving, een aansprakelijkheidsverzekering
-          en een recente verklaring omtrent gedrag (VOG).
+          Je grootgenoot werkt rechtstreeks voor jou; wij bemiddelen,
+          ondersteunen en blijven bereikbaar. Elke grootgenoot is zorgvuldig
+          gekozen en heeft een recente verklaring omtrent gedrag (VOG) en
+          referenties.
         </p>
       </div>
 

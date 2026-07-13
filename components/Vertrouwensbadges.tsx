@@ -24,10 +24,10 @@ const badges = [
     ),
   },
   {
-    tekst: "Aansprakelijkheidsverzekerd",
+    tekst: "Gedreven, zorgvuldig gekozen",
     icoon: (
       <svg {...svgProps}>
-        <path d="M12 3c3 2 6 2.5 8 2.5-.2 6.5-2.8 10.5-8 13-5.2-2.5-7.8-6.5-8-13 2 0 5-.5 8-2.5Z" />
+        <path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 9.2l5.4-.8L12 3.5Z" />
       </svg>
     ),
   },

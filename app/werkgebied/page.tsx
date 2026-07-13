@@ -28,7 +28,7 @@ export default function Werkgebied() {
       <p className="mt-5 text-xl leading-relaxed text-muted">
         Grootgenoot koppelt ouderen aan iemand uit de buurt in de hele regio
         Arnhem–Nijmegen en omstreken. Kies je plaats voor meer informatie, of
-        meld je gewoon aan — we kijken samen wat past.
+        meld je gewoon aan, dan kijken we samen wat past.
       </p>
 
       <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
