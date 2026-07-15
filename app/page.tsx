@@ -146,6 +146,11 @@ export default function Home() {
             Iemand uit de buurt die je ondersteunt én gezelschap houdt. Thuis
             en op pad.
           </p>
+          <p className="mt-3 text-lg leading-relaxed text-muted">
+            Denk aan gezelschap, samen wandelen, boodschappen, koken of
+            steunkousen aantrekken. Geen medische zorg, wel een vertrouwd iemand
+            dichtbij.
+          </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <GlasKaart
               href="/groot-support/hulp-zoeken"
@@ -153,7 +158,7 @@ export default function Home() {
               kantelKracht={7}
               className="bg-support/90 border-support/40 px-8 py-4"
             >
-              <span className="text-xl font-bold text-white">Ik zoek hulp</span>
+              <span className="text-xl font-bold text-white">Ik zoek ondersteuning</span>
             </GlasKaart>
             <GlasKaart
               href="/groot-support/helpen"

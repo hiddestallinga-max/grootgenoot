@@ -8,9 +8,13 @@ type Koppeling = { id: string; naam: string };
 export default function UrenForm({
   koppelingen,
   token,
+  email,
+  endpoint = "/api/uren",
 }: {
   koppelingen: Koppeling[];
-  token: string;
+  token?: string;
+  email?: string;
+  endpoint?: string;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "bezig" | "klaar">("idle");
@@ -26,11 +30,11 @@ export default function UrenForm({
     const doel = e.currentTarget;
 
     try {
-      const res = await fetch("/api/uren", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          token,
+          ...(token ? { token } : { email }),
           koppeling_id: String(form.get("koppeling") ?? ""),
           datum: String(form.get("datum") ?? ""),
           minuten: Number(form.get("minuten") ?? 0),

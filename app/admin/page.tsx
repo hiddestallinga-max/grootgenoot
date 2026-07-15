@@ -4,6 +4,7 @@ import AdminDashboard from "@/components/AdminDashboard";
 import KoppelingenBeheer, {
   type KoppelingView,
   type UrenRij,
+  type FactuurView,
 } from "@/components/KoppelingenBeheer";
 
 export const dynamic = "force-dynamic";
@@ -78,6 +79,44 @@ export default async function AdminPage() {
     uren: k.uren ?? [],
   }));
 
+  type FactuurRuw = {
+    id: string;
+    koppeling_id: string;
+    periode: string;
+    totaal_cent: number;
+    status: string;
+    nummer: number | null;
+    gecrediteerd: boolean;
+    created_at: string;
+    creditnotas: { id: string; nummer: number; bedrag_cent: number; created_at: string }[] | null;
+  };
+
+  const { data: facturenData } = await supabaseAdmin
+    .from("facturen")
+    .select(
+      "id, koppeling_id, periode, totaal_cent, status, nummer, gecrediteerd, created_at, creditnotas(id, nummer, bedrag_cent, created_at)",
+    )
+    .order("created_at", { ascending: false });
+
+  const facturenPerKoppeling: Record<string, FactuurView[]> = {};
+  for (const f of (facturenData as unknown as FactuurRuw[]) ?? []) {
+    const jaar = new Date(f.created_at).getFullYear();
+    const view: FactuurView = {
+      id: f.id,
+      nummer: f.nummer != null ? `${jaar}-${String(f.nummer).padStart(4, "0")}` : "—",
+      periode: f.periode,
+      totaalCent: f.totaal_cent,
+      status: f.status,
+      gecrediteerd: f.gecrediteerd,
+      creditnotas: (f.creditnotas ?? []).map((c) => ({
+        id: c.id,
+        nummer: `C${new Date(c.created_at).getFullYear()}-${String(c.nummer).padStart(4, "0")}`,
+        bedragCent: c.bedrag_cent,
+      })),
+    };
+    (facturenPerKoppeling[f.koppeling_id] ??= []).push(view);
+  }
+
   const kandidaat = (a: Aanmelding) => ({
     id: a.id,
     naam: `${a.voornaam} ${a.achternaam}`,
@@ -89,6 +128,7 @@ export default async function AdminPage() {
       <div className="mx-auto max-w-5xl px-6 pb-16">
         <KoppelingenBeheer
           koppelingen={koppelingen}
+          facturen={facturenPerKoppeling}
           hulpvragers={aanmeldingen.filter((a) => a.rol === "hulpvrager").map(kandidaat)}
           grootgenoten={aanmeldingen.filter((a) => a.rol === "grootgenoot").map(kandidaat)}
         />

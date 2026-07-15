@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { isToegestaan, ipVan } from "@/lib/rateLimit";
 import { leesWijzigToken } from "@/lib/wijzigToken";
+import { meldNieuweUren } from "@/lib/urenMelding";
 
 // Grootgenoot dient gewerkte uren in via de beveiligde maillink (zelfde
 // tokenmechanisme als "mijn aanmelding"). Goedkeuren gebeurt in de regiekamer.
@@ -73,5 +74,13 @@ export async function POST(request: Request) {
     console.error("Uren-fout:", error.message);
     return NextResponse.json({ error: "Opslaan mislukt" }, { status: 500 });
   }
+
+  await meldNieuweUren(kop.id, {
+    datum: parsed.data.datum,
+    minuten: parsed.data.minuten,
+    km: parsed.data.km,
+    omschrijving: parsed.data.omschrijving || null,
+  });
+
   return NextResponse.json({ ok: true });
 }

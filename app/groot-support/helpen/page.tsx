@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AanmeldForm from "@/components/AanmeldForm";
+import ProcedureUitleg from "@/components/ProcedureUitleg";
 
 const titel = "Ik wil iemand ondersteunen | Grootgenoot";
 const beschrijving =
@@ -42,6 +43,7 @@ export default function Helpen() {
         </p>
       </div>
 
+      <ProcedureUitleg />
       <AanmeldForm rol="grootgenoot" />
     </main>
   );

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AanmeldForm from "@/components/AanmeldForm";
 import Vertrouwensbadges from "@/components/Vertrouwensbadges";
+import ProcedureUitleg from "@/components/ProcedureUitleg";
 
 const titel = "Ik zoek ondersteuning | Grootgenoot";
 const beschrijving =
@@ -31,6 +32,7 @@ export default function HulpZoeken() {
         klein de vraag ook is. Gratis en vrijblijvend.
       </p>
       <Vertrouwensbadges className="mt-6 mb-10" />
+      <ProcedureUitleg metMantelzorger />
       <AanmeldForm rol="hulpvrager" />
     </main>
   );

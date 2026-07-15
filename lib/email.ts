@@ -8,13 +8,19 @@
 //    die je toevoegt bij mijndomein.nl > DNS-beheer
 // 3. API-key in .env.local en in Vercel (Settings > Environment Variables)
 
+type Bijlage = {
+  bestandsnaam: string;
+  inhoud: Uint8Array | string; // ruwe bytes of al een base64-string
+};
+
 type Mail = {
   naar: string;
   onderwerp: string;
   tekst: string;
+  bijlagen?: Bijlage[];
 };
 
-export async function stuurMail({ naar, onderwerp, tekst }: Mail): Promise<boolean> {
+export async function stuurMail({ naar, onderwerp, tekst, bijlagen }: Mail): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
   const van = process.env.EMAIL_VAN ?? "Grootgenoot <info@grootgenoot.nl>";
 
@@ -23,6 +29,12 @@ export async function stuurMail({ naar, onderwerp, tekst }: Mail): Promise<boole
     return false;
   }
 
+  const attachments = (bijlagen ?? []).map((b) => ({
+    filename: b.bestandsnaam,
+    content:
+      typeof b.inhoud === "string" ? b.inhoud : Buffer.from(b.inhoud).toString("base64"),
+  }));
+
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -30,7 +42,13 @@ export async function stuurMail({ naar, onderwerp, tekst }: Mail): Promise<boole
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from: van, to: [naar], subject: onderwerp, text: tekst }),
+      body: JSON.stringify({
+        from: van,
+        to: [naar],
+        subject: onderwerp,
+        text: tekst,
+        ...(attachments.length ? { attachments } : {}),
+      }),
     });
     if (!res.ok) {
       console.error("Mail versturen mislukt:", res.status, await res.text());

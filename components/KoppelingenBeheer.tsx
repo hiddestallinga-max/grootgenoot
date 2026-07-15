@@ -24,6 +24,16 @@ export type KoppelingView = {
 
 export type Kandidaat = { id: string; naam: string };
 
+export type FactuurView = {
+  id: string;
+  nummer: string;
+  periode: string;
+  totaalCent: number;
+  status: string;
+  gecrediteerd: boolean;
+  creditnotas: { id: string; nummer: string; bedragCent: number }[];
+};
+
 function euro(cent: number): string {
   return (cent / 100).toLocaleString("nl-NL", {
     style: "currency",
@@ -33,10 +43,12 @@ function euro(cent: number): string {
 
 export default function KoppelingenBeheer({
   koppelingen,
+  facturen,
   hulpvragers,
   grootgenoten,
 }: {
   koppelingen: KoppelingView[];
+  facturen: Record<string, FactuurView[]>;
   hulpvragers: Kandidaat[];
   grootgenoten: Kandidaat[];
 }) {
@@ -65,6 +77,19 @@ export default function KoppelingenBeheer({
       setBezig(null);
       setTimeout(() => setMelding(null), 4000);
     }
+  }
+
+  async function crediteer(factuur: FactuurView) {
+    const reden = window.prompt(
+      `Factuur ${factuur.nummer} (${euro(factuur.totaalCent)}) corrigeren?\n\nHet volledige bedrag wordt teruggeboekt naar de klant en er komt een creditnota. Geef eventueel een reden op:`,
+      "",
+    );
+    if (reden === null) return;
+    await roep(
+      "/api/admin/stripe/crediteren",
+      { factuur_id: factuur.id, reden },
+      `credit-${factuur.id}`,
+    );
   }
 
   async function nieuweKoppeling(e: React.FormEvent<HTMLFormElement>) {
@@ -342,6 +367,53 @@ export default function KoppelingenBeheer({
                   >
                     {bezig === "incasso" ? "Bezig…" : "Start incasso"}
                   </button>
+                </div>
+              )}
+
+              {(facturen[k.id] ?? []).length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-base font-bold text-ink">Facturen</h4>
+                  <ul className="mt-2 space-y-2">
+                    {(facturen[k.id] ?? []).map((f) => (
+                      <li
+                        key={f.id}
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/60 px-4 py-3 text-base"
+                      >
+                        <span className="text-ink">
+                          {f.nummer} · {f.periode} · {euro(f.totaalCent)}
+                          {f.gecrediteerd && (
+                            <span className="ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-sm font-semibold text-muted">
+                              gecrediteerd
+                            </span>
+                          )}
+                          {f.creditnotas.map((c) => (
+                            <span key={c.id} className="ml-2 text-sm text-muted">
+                              {c.nummer}: -{euro(c.bedragCent)}
+                            </span>
+                          ))}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <a
+                            href={`/api/admin/factuur/pdf?id=${f.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-lg border border-support px-3 py-1.5 text-sm font-semibold text-support transition hover:bg-support/5"
+                          >
+                            PDF
+                          </a>
+                          {!f.gecrediteerd && (
+                            <button
+                              className="rounded-lg border border-red-300 px-3 py-1.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50"
+                              disabled={bezig !== null}
+                              onClick={() => crediteer(f)}
+                            >
+                              {bezig === `credit-${f.id}` ? "Bezig…" : "Corrigeren"}
+                            </button>
+                          )}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </article>

@@ -59,6 +59,17 @@ export async function POST(request: Request) {
   // Mails versturen mag nooit de aanmelding laten mislukken; die is al opgeslagen.
   const d = parsed.data;
   const rolLabel = d.rol === "hulpvrager" ? "zoekt ondersteuning" : "wil grootgenoot worden";
+
+  const stappen = [
+    "1. We bellen je eerst om je vraag rustig door te spreken.",
+    "2. Zodra er een passende match is, plannen we een gratis en vrijblijvend kennismakingsgesprek.",
+  ];
+  if (d.rol === "hulpvrager") {
+    stappen.push(
+      "Fijn om te weten: als het relevant is, is het prettig als er een mantelzorger bij het kennismakingsgesprek aanwezig is. Die kan meehelpen bij het regelen van de administratie.",
+    );
+  }
+  const welkomTekst = `Beste ${d.voornaam},\n\nBedankt voor je aanmelding bij Grootgenoot. We hebben je gegevens goed ontvangen.\n\nZo gaat het nu verder:\n\n${stappen.join("\n\n")}\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`;
   await Promise.allSettled([
     stuurMail({
       naar: eigenaarEmail(),
@@ -82,7 +93,7 @@ export async function POST(request: Request) {
     stuurMail({
       naar: d.email,
       onderwerp: "Bedankt voor je aanmelding bij Grootgenoot",
-      tekst: `Beste ${d.voornaam},\n\nBedankt voor je aanmelding bij Grootgenoot. We hebben je gegevens goed ontvangen en nemen persoonlijk contact met je op.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+      tekst: welkomTekst,
     }),
   ]);
 

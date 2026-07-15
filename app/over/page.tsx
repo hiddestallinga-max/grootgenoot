@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const titel = "Over Grootgenoot | Onze visie";
@@ -71,12 +72,56 @@ export default function Over() {
         </p>
       </div>
 
+      <section aria-labelledby="wie" className="mt-14">
+        <h2 id="wie" className="text-2xl font-bold text-ink">
+          Wie erachter zit
+        </h2>
+        <div className="mt-6 text-xl leading-relaxed text-muted [&>p+p]:mt-5">
+          <Image
+            src="/hidde.webp"
+            alt="Hidde, oprichter van Grootgenoot"
+            width={530}
+            height={688}
+            className="float-right ml-6 mb-3 w-36 max-w-[42%] sm:w-72"
+            style={{ shapeOutside: "url(/hidde.webp)", shapeMargin: "16px" }}
+          />
+          <p>
+            Ik ben Hidde, oprichter van Grootgenoot. Ik groeide op in een gezin
+            waarin zorg vanzelfsprekend was. Met twee moeders, de één kinderarts
+            en de ander wijkverpleegkundige, hoorde ik van jongs af aan wat het
+            betekent om er echt voor een ander te zijn. Die vanzelfsprekendheid
+            draag ik met me mee.
+          </p>
+
+          <blockquote className="my-7 border-l-4 border-support pl-5 text-2xl font-bold italic leading-snug text-ink">
+            De meeste ouderen hebben geen dokter nodig, maar iemand die tijd
+            voor ze heeft.
+          </blockquote>
+
+          <p>
+            Nederland vergrijst razendsnel en de zorg raakt overvol. Maar veel
+            van wat ouderen missen is geen behandeling. Het is gezelschap, een
+            wandeling, een boodschap, aandacht. In juli 2026 ben ik Grootgenoot
+            begonnen om precies dat weer dichtbij te brengen. Ik studeer social
+            design aan de HKU, en dit is mijn manier om ontwerp in te zetten voor
+            iets wat er echt toe doet.
+          </p>
+          <p>
+            Mijn droom is een buurt waarin niemand er alleen voor staat, waarin
+            jong en oud elkaar weer opzoeken en voor elkaar klaarstaan. Wil je
+            meebouwen, hulp ontvangen of gewoon even sparren? Ik hoor het graag.
+            Je mag me altijd bellen of mailen.
+          </p>
+          <div className="clear-both" />
+        </div>
+      </section>
+
       <div className="mt-10 flex flex-wrap gap-4">
         <Link
           href="/groot-support/hulp-zoeken"
           className="rounded-xl bg-support px-6 py-4 text-xl font-bold text-white transition hover:opacity-90"
         >
-          Ik zoek hulp
+          Ik zoek ondersteuning
         </Link>
         <Link
           href="/groot-support/helpen"

@@ -105,7 +105,7 @@ export default async function HulpInPlaats({
           kantelKracht={7}
           className="bg-support/90 border-support/40 px-8 py-4"
         >
-          <span className="text-xl font-bold text-white">Ik zoek hulp</span>
+          <span className="text-xl font-bold text-white">Ik zoek ondersteuning</span>
         </GlasKaart>
         <GlasKaart
           href="/groot-support/helpen"

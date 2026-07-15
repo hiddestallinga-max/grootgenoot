@@ -8,6 +8,7 @@ import {
   REISKOSTEN_CENT_PER_KM,
   SERVICE_CENT_PER_UUR,
 } from "@/lib/tarieven";
+import { genereerFactuurPdf, type FactuurSnapshot } from "@/lib/factuurPdf";
 
 // Start de maandincasso voor één koppeling: telt de goedgekeurde uren op,
 // mailt de cliënt het overzicht en maakt één SEPA-incasso aan die Stripe
@@ -126,9 +127,35 @@ export async function POST(request: Request) {
         service_cent: serviceCent,
         status: "in_behandeling",
       })
-      .select("id")
+      .select("id, nummer")
       .single();
     if (factuurFout || !factuur) throw new Error(factuurFout?.message);
+
+    const nummerWeergave = `${new Date().getFullYear()}-${String(
+      (factuur as { nummer: number }).nummer,
+    ).padStart(4, "0")}`;
+    const snapshot: FactuurSnapshot = {
+      nummer: nummerWeergave,
+      datum: new Date().toISOString(),
+      periode,
+      klantNaam: `${hulpvrager.voornaam} ${hulpvrager.achternaam}`,
+      grootgenootNaam: `${grootgenoot.voornaam} ${grootgenoot.achternaam}`,
+      uurtariefCent: kop.uurtarief_cent,
+      regels: uren.map((u) => ({
+        datum: u.datum,
+        minuten: u.minuten,
+        km: Number(u.km ?? 0),
+        omschrijving: u.omschrijving ?? null,
+      })),
+      totaalUren,
+      totaalKm,
+      urenCent,
+      serviceCent,
+      reisCent,
+      totaalCent,
+    };
+    await supabaseAdmin.from("facturen").update({ snapshot }).eq("id", factuur.id);
+    const factuurPdf = await genereerFactuurPdf(snapshot);
 
     const intent = await stripe().paymentIntents.create({
       amount: totaalCent,
@@ -172,8 +199,9 @@ export async function POST(request: Request) {
     await Promise.allSettled([
       stuurMail({
         naar: hulpvrager.email,
-        onderwerp: `Uw maandoverzicht van Grootgenoot (${periode})`,
-        tekst: `Beste ${hulpvrager.voornaam},\n\n${overzicht}\n\nDit bedrag wordt binnen enkele dagen automatisch afgeschreven via uw machtiging. Klopt er iets niet? Laat het ons direct weten.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+        onderwerp: `Uw factuur van Grootgenoot (${periode})`,
+        tekst: `Beste ${hulpvrager.voornaam},\n\nIn de bijlage vindt u uw factuur voor ${periode} (factuurnummer ${nummerWeergave}). Het totaalbedrag is ${euroTekst(totaalCent)}.\n\nDit bedrag wordt binnen enkele dagen automatisch van uw rekening afgeschreven via uw incassomachtiging. Klopt er iets niet? Laat het ons direct weten.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+        bijlagen: [{ bestandsnaam: `factuur-${nummerWeergave}.pdf`, inhoud: factuurPdf }],
       }),
       stuurMail({
         naar: grootgenoot.email,

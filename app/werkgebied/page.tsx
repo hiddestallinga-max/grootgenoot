@@ -57,7 +57,7 @@ export default function Werkgebied() {
           href="/groot-support/hulp-zoeken"
           className="rounded-xl bg-support px-6 py-4 text-xl font-bold text-white transition hover:opacity-90"
         >
-          Ik zoek hulp
+          Ik zoek ondersteuning
         </Link>
         <Link
           href="/groot-support/helpen"
