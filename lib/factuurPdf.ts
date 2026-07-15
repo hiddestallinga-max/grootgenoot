@@ -43,6 +43,8 @@ export type FactuurSnapshot = {
   serviceCent: number;
   reisCent: number;
   totaalCent: number;
+  grootgenootKvk?: string | null;
+  grootgenootBtw?: string | null;
 };
 
 function euro(cent: number): string {
@@ -194,6 +196,15 @@ export async function genereerFactuurPdf(s: FactuurSnapshot): Promise<Uint8Array
     tekst(ctx, r.km > 0 ? getal(r.km) : "-", colKm, y, { grootte: 9, kleur: KLEUR.muted, rechts: true });
     y -= 14;
     if (y < 200) break;
+  }
+
+  if (s.grootgenootKvk) {
+    y -= 4;
+    const idlijn = `Uren uitgevoerd door ${s.grootgenootNaam} (zzp), KvK ${s.grootgenootKvk}${
+      s.grootgenootBtw ? `, BTW ${s.grootgenootBtw}` : ""
+    }`;
+    tekst(ctx, idlijn, colDatum, y, { grootte: 8, kleur: KLEUR.muted });
+    y -= 10;
   }
 
   y -= 6;

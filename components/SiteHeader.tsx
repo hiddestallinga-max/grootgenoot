@@ -7,7 +7,6 @@ import { useState } from "react";
 const links = [
   { href: "/groot-support", label: "Aanmelden" },
   { href: "/over", label: "Over" },
-  { href: "/werkgebied", label: "Werkgebied" },
   { href: "/tarieven", label: "Tarieven" },
   { href: "/contact", label: "Contact" },
   { href: "/groot-support/mijn-aanmelding", label: "Ik heb me al aangemeld" },

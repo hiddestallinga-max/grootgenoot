@@ -27,6 +27,9 @@ type Persoon = {
   stripe_onboarded: boolean;
   stripe_customer_id: string | null;
   stripe_machtiging: boolean;
+  kvk: string | null;
+  btw_id: string | null;
+  werkvorm: string | null;
 };
 
 export async function POST(request: Request) {
@@ -153,6 +156,8 @@ export async function POST(request: Request) {
       serviceCent,
       reisCent,
       totaalCent,
+      grootgenootKvk: grootgenoot.werkvorm === "zzp" ? grootgenoot.kvk ?? null : null,
+      grootgenootBtw: grootgenoot.werkvorm === "zzp" ? grootgenoot.btw_id ?? null : null,
     };
     await supabaseAdmin.from("facturen").update({ snapshot }).eq("id", factuur.id);
     const factuurPdf = await genereerFactuurPdf(snapshot);

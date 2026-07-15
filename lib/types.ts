@@ -31,7 +31,6 @@ export const CATEGORIEEN = [
   "Gezelschap",
   "Wandelen of een uitje",
   "Koken of samen eten",
-  "Steunkousen aan- en uittrekken",
   "Boodschappen of vervoer",
   "Hand- en spandiensten (was, bankieren, IT)",
   "Samen sporten of bewegen",

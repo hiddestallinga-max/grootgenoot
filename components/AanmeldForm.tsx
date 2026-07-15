@@ -23,6 +23,7 @@ export default function AanmeldForm({ rol }: Props) {
   const [status, setStatus] = useState<"idle" | "bezig" | "klaar">("idle");
   const [fout, setFout] = useState<string | null>(null);
   const [voorWie, setVoorWie] = useState<"zelf" | "naaste">("zelf");
+  const [werkvorm, setWerkvorm] = useState<"particulier" | "zzp">("particulier");
   const naaste = rol === "hulpvrager" && voorWie === "naaste";
 
   function toggleCategorie(c: string) {
@@ -56,6 +57,15 @@ export default function AanmeldForm({ rol }: Props) {
           : undefined,
       beschikbaarheid:
         rol === "grootgenoot" ? String(form.get("beschikbaarheid") ?? "") : "",
+      werkvorm: rol === "grootgenoot" ? werkvorm : undefined,
+      kvk:
+        rol === "grootgenoot" && werkvorm === "zzp"
+          ? String(form.get("kvk") ?? "")
+          : "",
+      btw_id:
+        rol === "grootgenoot" && werkvorm === "zzp"
+          ? String(form.get("btw_id") ?? "")
+          : "",
       toelichting,
       toestemming: form.get("toestemming") === "on",
       website: String(form.get("website") ?? ""), // honeypot, hoort leeg te zijn
@@ -264,6 +274,78 @@ export default function AanmeldForm({ rol }: Props) {
             className={inputClass}
             placeholder="Bijv. doordeweeks overdag, weekenden"
           />
+        </div>
+      )}
+
+      {rol === "grootgenoot" && (
+        <div>
+          <p className={labelClass}>Hoe ga je werken?</p>
+          <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {(
+              [
+                [
+                  "particulier",
+                  "Als particulier",
+                  "Incidenteel of naast je studie, via de regeling dienstverlening aan huis. Geen KvK nodig.",
+                ],
+                [
+                  "zzp",
+                  "Als zzp'er met KvK",
+                  "Je werkt met een eigen KvK-inschrijving.",
+                ],
+              ] as const
+            ).map(([w, label, uitleg]) => (
+              <button
+                key={w}
+                type="button"
+                onClick={() => setWerkvorm(w)}
+                aria-pressed={werkvorm === w}
+                className={`rounded-xl border p-4 text-left transition ${
+                  werkvorm === w
+                    ? "border-support bg-support/10"
+                    : "border-black/15 bg-white hover:border-support/50"
+                }`}
+              >
+                <span className="block text-lg font-semibold text-ink">{label}</span>
+                <span className="mt-1 block text-base leading-snug text-muted">
+                  {uitleg}
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-base leading-relaxed text-muted">
+            Weet je het nog niet zeker? Kies wat het beste past, we denken graag
+            met je mee.
+          </p>
+
+          {werkvorm === "zzp" && (
+            <div className="mt-4 grid gap-6 sm:grid-cols-2">
+              <div>
+                <label htmlFor="kvk" className={labelClass}>
+                  KvK-nummer
+                </label>
+                <input
+                  id="kvk"
+                  name="kvk"
+                  required
+                  className={inputClass}
+                  placeholder="12345678"
+                />
+              </div>
+              <div>
+                <label htmlFor="btw_id" className={labelClass}>
+                  BTW-id{" "}
+                  <span className="font-normal text-muted">(optioneel)</span>
+                </label>
+                <input
+                  id="btw_id"
+                  name="btw_id"
+                  className={inputClass}
+                  placeholder="NL000000000B00"
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
 

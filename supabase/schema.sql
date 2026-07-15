@@ -76,6 +76,12 @@ alter table public.aanmeldingen add column if not exists stripe_onboarded boolea
 alter table public.aanmeldingen add column if not exists stripe_customer_id text;         -- hulpvrager: klant
 alter table public.aanmeldingen add column if not exists stripe_machtiging boolean not null default false;
 
+-- Werkvorm van de grootgenoot: particulier (regeling dienstverlening aan huis)
+-- of zzp met eigen KvK. Bij zzp bewaren we KvK-nummer en (optioneel) BTW-id.
+alter table public.aanmeldingen add column if not exists werkvorm text;   -- 'particulier' of 'zzp'
+alter table public.aanmeldingen add column if not exists kvk text;
+alter table public.aanmeldingen add column if not exists btw_id text;
+
 -- Een koppeling tussen een hulpvrager en een grootgenoot, met tariefafspraak.
 create table if not exists public.koppelingen (
   id              uuid primary key default gen_random_uuid(),

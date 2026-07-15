@@ -1,4 +1,4 @@
-import Link from "next/link";
+import TerugKnop from "@/components/TerugKnop";
 import GegevensForm from "@/components/GegevensForm";
 
 export const metadata = {
@@ -12,12 +12,7 @@ export const metadata = {
 export default function Gegevens() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-12 sm:py-16">
-      <Link
-        href="/groot-support/mijn-aanmelding"
-        className="mb-8 inline-flex items-center gap-2 text-lg font-semibold text-support"
-      >
-        <span aria-hidden="true">←</span> Terug
-      </Link>
+      <TerugKnop naar="/groot-support/mijn-aanmelding" />
 
       <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
         Wij regelen je betaling

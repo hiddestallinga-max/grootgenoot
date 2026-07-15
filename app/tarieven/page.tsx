@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TerugKnop from "@/components/TerugKnop";
 import TariefCalculator from "@/components/TariefCalculator";
 import JsonLd from "@/components/JsonLd";
 
@@ -43,7 +44,7 @@ const faq = {
       name: "Is de grootgenoot gescreend?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Elke grootgenoot is zorgvuldig geselecteerd, met een recente verklaring omtrent gedrag (VOG) en referenties.",
+        text: "Elke grootgenoot is zorgvuldig geselecteerd. We vragen naar kwalificaties en opleiding en vragen referenties op.",
       },
     },
   ],
@@ -64,12 +65,7 @@ export default function Tarieven() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-12 sm:py-16">
       <JsonLd data={faq} />
-      <Link
-        href="/"
-        className="mb-8 inline-flex items-center gap-2 text-lg font-semibold text-support"
-      >
-        <span aria-hidden="true">←</span> Terug
-      </Link>
+      <TerugKnop naar="/" />
 
       <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
         Tarieven
@@ -95,12 +91,11 @@ export default function Tarieven() {
         </p>
         <p>
           Waar die service voor is: de persoonlijke kennismaking en een
-          zorgvuldige match, waarbij we van elke grootgenoot een verklaring
-          omtrent gedrag (VOG) en referenties vragen. Verder: vervanging bij
-          ziekte of vakantie, een nieuwe match als het toch niet klikt, de
-          urenregistratie en het duidelijke maandoverzicht, de veilige
-          automatische betaling, en één vast aanspreekpunt, ook voor je
-          familie. Alle bedragen zijn inclusief btw.
+          zorgvuldige match, waarbij we onze grootgenoten naar hun kwalificaties
+          vragen en referenties opvragen. Eén vast aanspreekpunt, ook voor je
+          familie. Vervanging bij ziekte of vakantie, een nieuwe match als het
+          toch niet klikt, administratieve kosten zoals de veilige automatische
+          betaling, en de platformkosten. Alle bedragen zijn inclusief btw.
         </p>
         <p>
           Reist je grootgenoot voor jou, bijvoorbeeld om je ergens naartoe te
@@ -126,18 +121,6 @@ export default function Tarieven() {
           automatisch: het uurdeel gaat rechtstreeks naar je grootgenoot, het
           servicedeel naar het platform. Het geld van je grootgenoot komt dus
           nooit op onze rekening.
-        </p>
-      </div>
-
-      <h2 className="mt-12 text-2xl font-bold text-ink">
-        Eerlijk over de afspraken
-      </h2>
-      <div className="mt-4 space-y-4 text-xl leading-relaxed text-muted">
-        <p>
-          Je grootgenoot werkt rechtstreeks voor jou; wij bemiddelen,
-          ondersteunen en blijven bereikbaar. Elke grootgenoot is zorgvuldig
-          gekozen en heeft een recente verklaring omtrent gedrag (VOG) en
-          referenties.
         </p>
       </div>
 

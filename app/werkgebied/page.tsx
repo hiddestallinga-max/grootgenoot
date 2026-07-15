@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TerugKnop from "@/components/TerugKnop";
 import { PLAATSEN } from "@/lib/plaatsen";
 
 const titel = "Werkgebied | Grootgenoot";
@@ -15,12 +16,7 @@ export const metadata = {
 export default function Werkgebied() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-12 sm:py-16">
-      <Link
-        href="/"
-        className="mb-8 inline-flex items-center gap-2 text-lg font-semibold text-support"
-      >
-        <span aria-hidden="true">←</span> Terug
-      </Link>
+      <TerugKnop naar="/" />
 
       <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
         Ons werkgebied

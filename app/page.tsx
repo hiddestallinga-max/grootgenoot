@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import GlasKaart from "@/components/GlasKaart";
 import JsonLd from "@/components/JsonLd";
-import Vertrouwensbadges from "@/components/Vertrouwensbadges";
 import { SITE_URL } from "@/lib/site";
 
 const localBusiness = {
@@ -16,7 +15,7 @@ const localBusiness = {
   image: `${SITE_URL}/og.png`,
   logo: `${SITE_URL}/grootgenoot-logo.svg`,
   description:
-    "Grootgenoot koppelt ouderen aan iemand uit de buurt voor hulp en gezelschap, thuis en op pad. Betrouwbaar, met VOG en één vast aanspreekpunt.",
+    "Grootgenoot koppelt ouderen aan iemand uit de buurt voor hulp en gezelschap, thuis en op pad. Betrouwbaar, met één vast aanspreekpunt.",
   priceRange: "€€",
   vatID: "NL005497451B95",
   address: {
@@ -140,16 +139,17 @@ export default function Home() {
             groot·ge·noot
           </h1>
           <p className="mt-1 text-2xl font-normal italic text-muted sm:text-3xl">
-            (de)
+            de (znw.), meervoud: grootgenoten
           </p>
           <p className="mt-5 text-xl leading-relaxed text-muted">
-            Iemand uit de buurt die je ondersteunt én gezelschap houdt. Thuis
-            en op pad.
+            Een vertrouwd iemand uit de buurt die een oudere gezelschap houdt en
+            bijstaat met de gewone dingen van alledag. Geen zorgverlener, maar
+            een bekend gezicht dat tijd, aandacht en een handje helpen brengt.
           </p>
-          <p className="mt-3 text-lg leading-relaxed text-muted">
-            Denk aan gezelschap, samen wandelen, boodschappen, koken of
-            steunkousen aantrekken. Geen medische zorg, wel een vertrouwd iemand
-            dichtbij.
+          <p className="mt-4 text-lg leading-relaxed text-muted">
+            Grootgenoot is er voor alles wat naast de zorg valt: samen wandelen,
+            koken, boodschappen doen of gewoon even bijpraten. Zo blijf je langer
+            met plezier en zelfstandig thuis wonen, met iemand die je echt kent.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <GlasKaart
@@ -191,8 +191,6 @@ export default function Home() {
           />
         </div>
       </div>
-
-      <Vertrouwensbadges className="mt-10" />
 
       <section aria-label="Onderdelen" className="mt-12">
         <GlasKaart href="/groot-support" className="p-7">

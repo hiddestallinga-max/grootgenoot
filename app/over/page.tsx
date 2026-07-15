@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import TerugKnop from "@/components/TerugKnop";
 
 const titel = "Over Grootgenoot | Onze visie";
 const beschrijving =
@@ -15,31 +16,48 @@ export const metadata = {
 export default function Over() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-12 sm:py-16">
-      <Link
-        href="/"
-        className="mb-8 inline-flex items-center gap-2 text-lg font-semibold text-support"
-      >
-        <span aria-hidden="true">←</span> Terug
-      </Link>
+      <TerugKnop naar="/" />
 
       <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
         Over Grootgenoot
       </h1>
 
-      <div className="mt-8 space-y-6 text-xl leading-relaxed text-muted">
+      <div className="mt-8 text-xl leading-relaxed text-muted [&>p+p]:mt-4">
+        <Image
+          src="/hidde.webp"
+          alt="Hidde, oprichter van Grootgenoot"
+          width={530}
+          height={688}
+          className="float-right ml-6 mb-3 w-32 max-w-[40%] sm:w-56"
+          style={{ shapeOutside: "url(/hidde.webp)", shapeMargin: "16px" }}
+        />
+        <p>
+          Ik ben Hidde, oprichter van Grootgenoot. Ik groeide op in een gezin
+          waarin zorg vanzelfsprekend was, met twee moeders die er middenin
+          staan: een kinderarts en een wijkverpleegkundige. In juli 2026 ben ik
+          Grootgenoot begonnen, naast mijn studie social design aan de HKU.
+        </p>
+        <p>
+          Van huis uit weet ik hoe waardevol aandacht en goede hulp zijn, en hoe
+          zwaar de druk op de zorg is geworden. Grootgenoot is mijn manier om
+          daar iets aan te doen.
+        </p>
+        <div className="clear-both" />
+      </div>
+
+      <h2 className="mt-12 text-2xl font-bold text-ink">Waarom Grootgenoot</h2>
+      <div className="mt-4 space-y-5 text-xl leading-relaxed text-muted">
         <p>
           Nederland vergrijst in hoog tempo. De babyboomgeneratie bereikt de
           leeftijd waarop hulp nodig wordt, terwijl het aantal mensen dat die
-          hulp kan geven juist krimpt. De druk op de zorg wordt de komende
-          jaren enorm: langere wachtlijsten, vollere agenda&apos;s en
-          zorgprofessionals die verdrinken in taken waarvoor ze nooit zijn
-          opgeleid.
+          hulp kan geven juist krimpt. De wachtlijsten groeien en
+          zorgprofessionals verdrinken in taken waarvoor ze nooit zijn opgeleid.
         </p>
         <p>
           Want veel van wat ouderen nodig hebben is geen medische zorg.
-          Gezelschap. Een wandeling. Boodschappen. Steunkousen aantrekken.
-          Hulp bij het onthouden van medicatie of afspraken. Daarvoor is geen
-          diploma nodig, wel een betrouwbaar iemand uit de buurt.
+          Gezelschap, een wandeling, de boodschappen, hulp bij het onthouden van
+          afspraken. Daarvoor is geen diploma nodig, wel een betrouwbaar iemand
+          uit de buurt.
         </p>
       </div>
 
@@ -50,71 +68,21 @@ export default function Over() {
         </p>
       </div>
 
-      <div className="space-y-6 text-xl leading-relaxed text-muted">
+      <div className="space-y-5 text-xl leading-relaxed text-muted">
         <p>
-          Daarom is er Grootgenoot. Wij koppelen ouderen aan grootgenoten:
-          mensen uit de buurt die ondersteunen en gezelschap houden. Bewust privaat
+          Grootgenoot koppelt ouderen aan die betrouwbare buur. Bewust privaat
           en uit eigen portemonnee, zonder indicatie, zonder wachtlijst en
-          zonder minimum aantal uren. Je betaalt alleen voor de hulp die je
-          echt wilt.
+          zonder minimum aantal uren. Je betaalt alleen voor de hulp die je echt
+          wilt.
         </p>
         <p>
-          Zo snijdt het mes aan twee kanten. Ouderen krijgen sneller en
-          persoonlijker hulp, en zorgprofessionals houden hun handen vrij voor
-          het werk waarvoor ze zijn opgeleid.
-        </p>
-        <p>
-          Onze blik is op de lange termijn. Wie vroeg begint met kleine hulp,
-          gezelschap en beweging, blijft langer gezond en zelfstandig thuis.
-          Dat is fijner voor iedereen, en het scheelt de samenleving veel
-          zorgkosten. We werken daarom graag samen met huisartsen, buurtzorg
-          en verzorgingshuizen.
+          Zo krijgen ouderen sneller en persoonlijker hulp, en houden
+          zorgprofessionals hun handen vrij voor het werk waarvoor ze zijn
+          opgeleid. Wie vroeg begint met kleine hulp, gezelschap en beweging,
+          blijft bovendien langer gezond en zelfstandig thuis. Daarom werken we
+          graag samen met huisartsen, buurtzorg en verzorgingshuizen.
         </p>
       </div>
-
-      <section aria-labelledby="wie" className="mt-14">
-        <h2 id="wie" className="text-2xl font-bold text-ink">
-          Wie erachter zit
-        </h2>
-        <div className="mt-6 text-xl leading-relaxed text-muted [&>p+p]:mt-5">
-          <Image
-            src="/hidde.webp"
-            alt="Hidde, oprichter van Grootgenoot"
-            width={530}
-            height={688}
-            className="float-right ml-6 mb-3 w-36 max-w-[42%] sm:w-72"
-            style={{ shapeOutside: "url(/hidde.webp)", shapeMargin: "16px" }}
-          />
-          <p>
-            Ik ben Hidde, oprichter van Grootgenoot. Ik groeide op in een gezin
-            waarin zorg vanzelfsprekend was. Met twee moeders, de één kinderarts
-            en de ander wijkverpleegkundige, hoorde ik van jongs af aan wat het
-            betekent om er echt voor een ander te zijn. Die vanzelfsprekendheid
-            draag ik met me mee.
-          </p>
-
-          <blockquote className="my-7 border-l-4 border-support pl-5 text-2xl font-bold italic leading-snug text-ink">
-            De meeste ouderen hebben geen dokter nodig, maar iemand die tijd
-            voor ze heeft.
-          </blockquote>
-
-          <p>
-            Nederland vergrijst razendsnel en de zorg raakt overvol. Maar veel
-            van wat ouderen missen is geen behandeling. Het is gezelschap, een
-            wandeling, een boodschap, aandacht. In juli 2026 ben ik Grootgenoot
-            begonnen om precies dat weer dichtbij te brengen. Ik studeer social
-            design aan de HKU, en dit is mijn manier om ontwerp in te zetten voor
-            iets wat er echt toe doet.
-          </p>
-          <p>
-            Mijn droom is een buurt waarin niemand er alleen voor staat, waarin
-            jong en oud elkaar weer opzoeken en voor elkaar klaarstaan. Wil je
-            meebouwen, hulp ontvangen of gewoon even sparren? Ik hoor het graag.
-            Je mag me altijd bellen of mailen.
-          </p>
-          <div className="clear-both" />
-        </div>
-      </section>
 
       <div className="mt-10 flex flex-wrap gap-4">
         <Link
