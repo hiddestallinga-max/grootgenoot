@@ -139,17 +139,16 @@ export default function Home() {
             groot·ge·noot
           </h1>
           <p className="mt-1 text-2xl font-normal italic text-muted sm:text-3xl">
-            de (znw.), meervoud: grootgenoten
+            (de)
           </p>
           <p className="mt-5 text-xl leading-relaxed text-muted">
             Een vertrouwd iemand uit de buurt die een oudere gezelschap houdt en
             bijstaat met de gewone dingen van alledag. Geen zorgverlener, maar
             een bekend gezicht dat tijd, aandacht en een handje helpen brengt.
           </p>
-          <p className="mt-4 text-lg leading-relaxed text-muted">
+          <p className="mt-4 text-xl leading-relaxed text-muted">
             Grootgenoot is er voor alles wat naast de zorg valt: samen wandelen,
-            koken, boodschappen doen of gewoon even bijpraten. Zo blijf je langer
-            met plezier en zelfstandig thuis wonen, met iemand die je echt kent.
+            koken, boodschappen doen of gewoon even bijpraten.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <GlasKaart
@@ -171,12 +170,11 @@ export default function Home() {
               </span>
             </GlasKaart>
           </div>
-          <p className="mt-6 text-base text-muted">
-            Actief in de regio Arnhem–Nijmegen en omstreken.{" "}
+          <p className="mt-6 whitespace-nowrap text-base text-muted max-sm:whitespace-normal">
+            Actief in de regio Arnhem–Nijmegen ·{" "}
             <Link href="/werkgebied" className="font-semibold text-support underline">
               Bekijk het werkgebied
             </Link>
-            .
           </p>
         </header>
         <div className="relative">

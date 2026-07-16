@@ -28,7 +28,7 @@ export default function Over() {
           alt="Hidde, oprichter van Grootgenoot"
           width={530}
           height={688}
-          className="float-right ml-6 mb-3 w-32 max-w-[40%] sm:w-56"
+          className="float-right ml-6 mb-3 w-44 max-w-[45%] sm:w-72"
           style={{ shapeOutside: "url(/hidde.webp)", shapeMargin: "16px" }}
         />
         <p>

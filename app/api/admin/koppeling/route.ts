@@ -16,6 +16,11 @@ const schema = z.discriminatedUnion("actie", [
   z.object({ actie: z.literal("verwijder"), id: z.string().uuid() }),
   z.object({ actie: z.literal("herstel"), id: z.string().uuid() }),
   z.object({ actie: z.literal("definitief"), id: z.string().uuid() }),
+  z.object({
+    actie: z.literal("tarief"),
+    id: z.string().uuid(),
+    uurtarief_cent: z.number().int().min(1000).max(10000),
+  }),
 ]);
 
 export async function POST(request: Request) {
@@ -41,6 +46,21 @@ export async function POST(request: Request) {
     if (error) {
       console.error("Koppeling-fout:", error.message);
       return NextResponse.json({ error: "Aanmaken mislukt" }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  if (d.actie === "tarief") {
+    // Nieuw uurtarief afgesproken met de grootgenoot. Geldt alleen voor
+    // toekomstige facturen: bestaande facturen zijn een vaste momentopname
+    // (snapshot) en veranderen niet mee.
+    const { error } = await supabaseAdmin
+      .from("koppelingen")
+      .update({ uurtarief_cent: d.uurtarief_cent })
+      .eq("id", d.id);
+    if (error) {
+      console.error("Tarief-fout:", error.message);
+      return NextResponse.json({ error: "Tarief opslaan mislukt" }, { status: 500 });
     }
     return NextResponse.json({ ok: true });
   }

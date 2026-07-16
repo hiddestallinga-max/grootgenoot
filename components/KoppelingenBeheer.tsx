@@ -114,6 +114,24 @@ export default function KoppelingenBeheer({
     );
   }
 
+  async function wijzigTarief(k: KoppelingView) {
+    const invoer = window.prompt(
+      `Nieuw uurtarief voor ${k.grootgenoot.naam} (in euro's, tussen 10 en 100). Geldt alleen voor nieuwe facturen; al verstuurde facturen veranderen niet mee.`,
+      (k.uurtarief_cent / 100).toLocaleString("nl-NL"),
+    );
+    if (invoer === null) return;
+    const tarief = Number(invoer.replace(",", "."));
+    if (!Number.isFinite(tarief) || tarief < 10 || tarief > 100) {
+      setFout("Vul een uurtarief tussen 10 en 100 euro in.");
+      return;
+    }
+    await roep(
+      "/api/admin/koppeling",
+      { actie: "tarief", id: k.id, uurtarief_cent: Math.round(tarief * 100) },
+      `tarief-${k.id}`,
+    );
+  }
+
   async function annuleer(factuur: FactuurView) {
     const zeker = window.confirm(
       `De aangekondigde afschrijving van factuur ${factuur.nummer} (${euro(factuur.totaalCent)}) annuleren?\n\nDe klant krijgt een mail dat er niets wordt afgeschreven en de uren komen weer op 'goedgekeurd' te staan.`,
@@ -244,6 +262,14 @@ export default function KoppelingenBeheer({
                 <span className="flex items-center gap-2 text-sm font-semibold text-muted">
                   {euro(k.uurtarief_cent)}/uur + {euro(SERVICE_CENT_PER_UUR)}/uur
                   service
+                  <button
+                    onClick={() => wijzigTarief(k)}
+                    disabled={bezig !== null}
+                    title="Uurtarief wijzigen"
+                    className="rounded-lg border border-black/15 px-2 py-0.5 text-sm font-semibold text-ink transition hover:border-support disabled:opacity-50"
+                  >
+                    Wijzig tarief
+                  </button>
                   <button
                     onClick={() => {
                       if (
