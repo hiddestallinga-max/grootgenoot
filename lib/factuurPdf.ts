@@ -1,7 +1,14 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
+import {
+  SERVICE_CENT_PER_UUR,
+  REISKOSTEN_CENT_PER_KM,
+  BTW_PCT_SERVICE,
+  btwOverService,
+} from "./tarieven";
 
 // Nette factuur- en creditnota-PDF's in de huisstijl van Grootgenoot.
 // Zuiver JavaScript (pdf-lib), dus werkt prima op Vercel zonder externe fonts.
+// Bij veel urenregels loopt de tabel automatisch door op een volgende pagina.
 
 const BEDRIJF = {
   naam: "Grootgenoot",
@@ -21,6 +28,9 @@ const KLEUR = {
   lijn: rgb(0.85, 0.88, 0.92),
   wit: rgb(1, 1, 1),
 };
+
+const PAGINA = { breedte: 595.28, hoogte: 841.89 };
+const ONDERGRENS = 110; // onder deze y begint een nieuwe pagina (boven de voettekst)
 
 export type FactuurRegel = {
   datum: string;
@@ -43,6 +53,13 @@ export type FactuurSnapshot = {
   serviceCent: number;
   reisCent: number;
   totaalCent: number;
+  // Tarieven zoals ze golden op factuurdatum (oude snapshots missen deze
+  // velden; dan vallen we terug op de huidige constanten).
+  serviceCentPerUur?: number;
+  reiskostenCentPerKm?: number;
+  btwPctService?: number;
+  btwCent?: number;
+  incassoVanaf?: string | null;
   grootgenootKvk?: string | null;
   grootgenootBtw?: string | null;
 };
@@ -61,7 +78,14 @@ function datumNl(iso: string): string {
   return d.toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+function datumLang(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
+}
+
 type Ctx = {
+  doc: PDFDocument;
   page: PDFPage;
   font: PDFFont;
   bold: PDFFont;
@@ -128,17 +152,23 @@ function totaalregel(
   vet = false,
 ) {
   const rechts = ctx.breedte - marge;
-  tekst(ctx, label, rechts - 160, y, { grootte: vet ? 12 : 10, vet, kleur: vet ? KLEUR.ink : KLEUR.muted });
+  tekst(ctx, label, rechts - 240, y, { grootte: vet ? 12 : 10, vet, kleur: vet ? KLEUR.ink : KLEUR.muted });
   tekst(ctx, bedrag, rechts, y, { grootte: vet ? 12 : 10, vet, rechts: true });
 }
 
 async function nieuwDocument() {
   const doc = await PDFDocument.create();
-  const page = doc.addPage([595.28, 841.89]);
+  const page = doc.addPage([PAGINA.breedte, PAGINA.hoogte]);
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const ctx: Ctx = { page, font, bold, breedte: 595.28 };
+  const ctx: Ctx = { doc, page, font, bold, breedte: PAGINA.breedte };
   return { doc, ctx };
+}
+
+/** Begint een nieuwe pagina en geeft de nieuwe start-y terug. */
+function nieuwePagina(ctx: Ctx): number {
+  ctx.page = ctx.doc.addPage([PAGINA.breedte, PAGINA.hoogte]);
+  return PAGINA.hoogte - 60;
 }
 
 function voettekst(ctx: Ctx, marge: number, boodschap: string) {
@@ -163,29 +193,42 @@ export async function genereerFactuurPdf(s: FactuurSnapshot): Promise<Uint8Array
   const marge = 50;
   const { doc, ctx } = await nieuwDocument();
 
+  const servicePerUur = s.serviceCentPerUur ?? SERVICE_CENT_PER_UUR;
+  const reisPerKm = s.reiskostenCentPerKm ?? REISKOSTEN_CENT_PER_KM;
+  const btwPct = s.btwPctService ?? BTW_PCT_SERVICE;
+  const btwCent = s.btwCent ?? btwOverService(s.serviceCent);
+
   const yNaKop = kop(ctx, "Factuur", s.nummer, s.datum, s.periode, marge);
   let y = afzenderEnKlant(ctx, s.klantNaam, marge, yNaKop);
 
-  y -= 24;
-  // Tabelkop
-  ctx.page.drawRectangle({
-    x: marge,
-    y: y - 4,
-    width: ctx.breedte - marge * 2,
-    height: 20,
-    color: rgb(0.93, 0.96, 0.99),
-  });
   const colDatum = marge + 6;
   const colOms = marge + 90;
   const colUur = ctx.breedte - marge - 120;
   const colKm = ctx.breedte - marge - 40;
-  tekst(ctx, "Datum", colDatum, y + 2, { grootte: 9, vet: true });
-  tekst(ctx, "Omschrijving", colOms, y + 2, { grootte: 9, vet: true });
-  tekst(ctx, "Uren", colUur, y + 2, { grootte: 9, vet: true, rechts: true });
-  tekst(ctx, "Km", colKm, y + 2, { grootte: 9, vet: true, rechts: true });
-  y -= 18;
+
+  function tabelkop(yPos: number): number {
+    ctx.page.drawRectangle({
+      x: marge,
+      y: yPos - 4,
+      width: ctx.breedte - marge * 2,
+      height: 20,
+      color: rgb(0.93, 0.96, 0.99),
+    });
+    tekst(ctx, "Datum", colDatum, yPos + 2, { grootte: 9, vet: true });
+    tekst(ctx, "Omschrijving", colOms, yPos + 2, { grootte: 9, vet: true });
+    tekst(ctx, "Uren", colUur, yPos + 2, { grootte: 9, vet: true, rechts: true });
+    tekst(ctx, "Km", colKm, yPos + 2, { grootte: 9, vet: true, rechts: true });
+    return yPos - 18;
+  }
+
+  y -= 24;
+  y = tabelkop(y);
 
   for (const r of s.regels) {
+    if (y < ONDERGRENS) {
+      y = nieuwePagina(ctx);
+      y = tabelkop(y);
+    }
     const uur = getal(r.minuten / 60);
     tekst(ctx, datumNl(r.datum), colDatum, y, { grootte: 9, kleur: KLEUR.muted });
     const oms = r.omschrijving && r.omschrijving.length > 52
@@ -195,7 +238,11 @@ export async function genereerFactuurPdf(s: FactuurSnapshot): Promise<Uint8Array
     tekst(ctx, uur, colUur, y, { grootte: 9, kleur: KLEUR.muted, rechts: true });
     tekst(ctx, r.km > 0 ? getal(r.km) : "-", colKm, y, { grootte: 9, kleur: KLEUR.muted, rechts: true });
     y -= 14;
-    if (y < 200) break;
+  }
+
+  // Het totaalblok heeft ongeveer 130 punten nodig; anders naar een nieuwe pagina.
+  if (y < ONDERGRENS + 130) {
+    y = nieuwePagina(ctx);
   }
 
   if (s.grootgenootKvk) {
@@ -209,7 +256,7 @@ export async function genereerFactuurPdf(s: FactuurSnapshot): Promise<Uint8Array
 
   y -= 6;
   ctx.page.drawLine({
-    start: { x: ctx.breedte - marge - 220, y },
+    start: { x: ctx.breedte - marge - 280, y },
     end: { x: ctx.breedte - marge, y },
     thickness: 0.5,
     color: KLEUR.lijn,
@@ -217,25 +264,49 @@ export async function genereerFactuurPdf(s: FactuurSnapshot): Promise<Uint8Array
   y -= 18;
   totaalregel(ctx, `Uren (${getal(s.totaalUren)} × ${euro(s.uurtariefCent)})`, euro(s.urenCent), y, marge);
   y -= 16;
-  totaalregel(ctx, `Service (${getal(s.totaalUren)} × ${euro(400)})`, euro(s.serviceCent), y, marge);
+  totaalregel(
+    ctx,
+    `Service (${getal(s.totaalUren)} × ${euro(servicePerUur)}, incl. btw)`,
+    euro(s.serviceCent),
+    y,
+    marge,
+  );
   if (s.reisCent > 0) {
     y -= 16;
-    totaalregel(ctx, `Reiskosten (${getal(s.totaalKm)} km × ${euro(23)})`, euro(s.reisCent), y, marge);
+    totaalregel(ctx, `Reiskosten (${getal(s.totaalKm)} km × ${euro(reisPerKm)})`, euro(s.reisCent), y, marge);
   }
   y -= 10;
   ctx.page.drawLine({
-    start: { x: ctx.breedte - marge - 220, y },
+    start: { x: ctx.breedte - marge - 280, y },
     end: { x: ctx.breedte - marge, y },
     thickness: 0.5,
     color: KLEUR.lijn,
   });
   y -= 20;
   totaalregel(ctx, "Totaal", euro(s.totaalCent), y, marge, true);
+  y -= 16;
+  totaalregel(
+    ctx,
+    `Waarvan btw over de service (${btwPct}%)`,
+    euro(btwCent),
+    y,
+    marge,
+  );
+  y -= 12;
+  tekst(
+    ctx,
+    "Het uurtarief en de reiskosten gaan volledig naar uw grootgenoot; daarover brengt Grootgenoot geen btw in rekening.",
+    marge,
+    y,
+    { grootte: 8, kleur: KLEUR.muted },
+  );
 
   voettekst(
     ctx,
     marge,
-    "Dit bedrag wordt via automatische SEPA-incasso van uw rekening afgeschreven. Vragen? Bel of mail ons gerust.",
+    s.incassoVanaf
+      ? `Dit bedrag wordt op of kort na ${datumLang(s.incassoVanaf)} via automatische SEPA-incasso afgeschreven. Vragen? Bel of mail ons gerust.`
+      : "Dit bedrag wordt via automatische SEPA-incasso van uw rekening afgeschreven. Vragen? Bel of mail ons gerust.",
   );
 
   return doc.save();

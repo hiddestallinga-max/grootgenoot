@@ -47,9 +47,14 @@ export default function Privacy() {
             gewerkte uren en de maandoverzichten.
           </p>
           <p className="mt-3">
-            Betalingen verlopen via onze betaalpartner Stripe. Je bankgegevens
-            en incassomachtiging worden door Stripe verwerkt en bewaard; wij
-            zien of bewaren zelf geen rekeningnummers.
+            Betalingen verlopen via onze betaalpartner Stripe. Je
+            incassomachtiging en bankgegevens worden door Stripe verwerkt en
+            bewaard. Kies je ervoor dat wij de betaling voor je instellen (via
+            het formulier &quot;Wij regelen je betaling&quot;), dan geef je ons
+            daarvoor eenmalig je adres, rekeningnummer en, als je grootgenoot
+            bent, je geboortedatum. Die gegevens bewaren we beveiligd, gebruiken
+            we uitsluitend om je betaling bij Stripe in te stellen en
+            verwijderen we direct daarna weer.
           </p>
         </section>
 

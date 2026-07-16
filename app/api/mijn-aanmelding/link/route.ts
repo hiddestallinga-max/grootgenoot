@@ -48,7 +48,8 @@ export async function POST(request: Request) {
   const { data, error } = await supabaseAdmin
     .from("aanmeldingen")
     .select("id, rol, voornaam")
-    .ilike("email", email);
+    .ilike("email", email)
+    .is("verwijderd_op", null);
 
   if (error || !data || data.length === 0) return antwoord;
 
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
   await stuurMail({
     naar: email,
     onderwerp: "Je aanmelding bij Grootgenoot bekijken of wijzigen",
-    tekst: `Beste ${data[0].voornaam},\n\n${regels.join("\n\n")}\n\nDeze link is 24 uur geldig. Heb je dit niet zelf aangevraagd? Dan kun je deze mail gewoon negeren.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+    tekst: `Beste ${data[0].voornaam},\n\n${regels.join("\n\n")}\n\nDeze link is 24 uur geldig. Niet zelf aangevraagd? Negeer deze mail dan gewoon.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
   });
 
   return antwoord;

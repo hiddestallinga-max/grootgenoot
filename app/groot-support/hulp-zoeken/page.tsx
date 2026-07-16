@@ -1,3 +1,4 @@
+import Link from "next/link";
 import TerugKnop from "@/components/TerugKnop";
 import AanmeldForm from "@/components/AanmeldForm";
 import ProcedureUitleg from "@/components/ProcedureUitleg";
@@ -24,6 +25,13 @@ export default function HulpZoeken() {
         Iemand uit de buurt voor gezelschap en praktische hulp, thuis en op pad.
         Laat je gegevens achter, dan nemen we persoonlijk contact met je op, hoe
         klein de vraag ook is. Gratis en vrijblijvend.
+      </p>
+      <p className="mt-3 text-lg leading-relaxed text-muted">
+        Zoek je hulp voor je vader, moeder of een naaste? Lees dan ook{" "}
+        <Link href="/voor-familie" className="font-semibold text-support underline">
+          onze pagina voor familie en mantelzorgers
+        </Link>
+        .
       </p>
       <ProcedureUitleg metMantelzorger />
       <AanmeldForm rol="hulpvrager" />

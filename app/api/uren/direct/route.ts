@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     .select("id")
     .ilike("email", parsed.data.email)
     .eq("rol", "grootgenoot")
+    .is("verwijderd_op", null)
     .maybeSingle();
 
   if (!gg) {
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
     .select("id, actief")
     .eq("id", parsed.data.koppeling_id)
     .eq("grootgenoot_id", gg.id)
+    .is("verwijderd_op", null)
     .single();
 
   if (!kop || !kop.actief) {

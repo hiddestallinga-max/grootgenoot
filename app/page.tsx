@@ -199,7 +199,7 @@ export default function Home() {
               <IcoonSupport />
             </span>
             <div className="min-w-0 flex-1">
-              <h2 className="text-2xl font-bold text-ink">Groot Support</h2>
+              <h2 className="text-2xl font-bold text-ink">Aanmelden</h2>
               <p className="mt-1 text-lg leading-relaxed text-muted">
                 Vind ondersteuning, of word grootgenoot en ondersteun iemand
                 in de buurt.
@@ -217,23 +217,28 @@ export default function Home() {
         <p className="mt-10 text-base font-semibold text-muted">
           Binnenkort ook:
         </p>
+        {/* Bewust géén klikbare kaarten: deze onderdelen bestaan nog niet.
+            Gedempte stijl + label voorkomt dat bezoekers erop proberen te
+            klikken en denken dat de site kapot is. */}
         <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {kleineTegels.map((tegel) => (
-            <GlasKaart
+            <div
               key={tegel.key}
-              className="h-full p-4"
-              volgKracht={6}
-              kantelKracht={3}
+              aria-disabled="true"
+              className="h-full rounded-2xl border border-dashed border-ink/15 bg-white/40 p-4 opacity-70"
             >
               <div className="flex items-center gap-3">
                 <span className={`${tegel.kleur} shrink-0 [&>svg]:h-6 [&>svg]:w-6`}>
                   {tegel.icoon}
                 </span>
-                <h3 className="text-lg font-bold leading-tight text-ink">
-                  {tegel.titel}
-                </h3>
+                <div>
+                  <h3 className="text-lg font-bold leading-tight text-ink">
+                    {tegel.titel}
+                  </h3>
+                  <p className="text-sm font-semibold text-muted">binnenkort</p>
+                </div>
               </div>
-            </GlasKaart>
+            </div>
           ))}
         </div>
       </section>

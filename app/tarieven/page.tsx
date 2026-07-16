@@ -110,6 +110,12 @@ export default function Tarieven() {
           minimum aantal uren en geen opzegtermijn. De eerste kennismaking is
           altijd gratis en vrijblijvend.
         </p>
+        <p>
+          Ter vergelijking: bij vergelijkbare organisaties voor aanvullende
+          hulp aan huis betaal je al gauw 45 euro per uur of meer, inclusief
+          bemiddelingskosten. Doordat wij een vast servicebedrag rekenen in
+          plaats van een percentage, blijft hulp via Grootgenoot betaalbaar.
+        </p>
       </div>
 
       <h2 className="mt-12 text-2xl font-bold text-ink">Zo werkt betalen</h2>

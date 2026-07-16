@@ -72,7 +72,15 @@ export async function POST(request: Request) {
     .from("aanmeldingen")
     .select("rol")
     .eq("id", id)
+    .is("verwijderd_op", null)
     .single();
+
+  if (!rij) {
+    return NextResponse.json(
+      { error: "Deze aanmelding bestaat niet meer." },
+      { status: 404 },
+    );
+  }
 
   const d = parsed.data;
   const update = {

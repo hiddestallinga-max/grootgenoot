@@ -100,31 +100,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Opslaan mislukt" }, { status: 500 });
   }
 
+  // Bewust géén IBAN of andere betaalgegevens in deze mail: die staan alleen
+  // in de database (RLS aan) en zijn in de regiekamer in te zien. Zo zwerven
+  // er geen bankgegevens rond in mailboxen.
   const rolLabel = d.rol === "hulpvrager" ? "hulpvrager (incasso)" : "grootgenoot (uitbetaling)";
-  const regels = [
-    `Rol: ${rolLabel}`,
-    `Naam: ${d.voornaam} ${d.achternaam}`,
-    `E-mail: ${d.email}`,
-    `Telefoon: ${d.telefoon}`,
-    `Adres: ${d.straat}, ${d.postcode} ${d.woonplaats}`,
-    d.rol === "grootgenoot" && d.geboortedatum ? `Geboortedatum: ${d.geboortedatum}` : null,
-    d.rol === "grootgenoot" && d.kvk ? `KvK: ${d.kvk}` : null,
-    `IBAN: ${d.iban}`,
-    `Rekeninghouder: ${d.rekeninghouder}`,
-    d.rol === "hulpvrager"
-      ? `Incassomachtiging: ${d.machtiging_akkoord ? "akkoord gegeven" : "NIET akkoord"}`
-      : null,
-    d.toelichting ? `Toelichting: ${d.toelichting}` : null,
-    "",
-    "Zet deze gegevens in Stripe en vink daarna 'verwerkt' aan in de regiekamer: /admin",
-  ]
-    .filter((r) => r !== null)
-    .join("\n");
-
   await stuurMail({
     naar: eigenaarEmail(),
     onderwerp: `Betaalgegevens ontvangen: ${d.voornaam} ${d.achternaam} (${rolLabel})`,
-    tekst: regels,
+    tekst: `${d.voornaam} ${d.achternaam} (${rolLabel}) heeft betaalgegevens ingestuurd via "Wij regelen je betaling".\n\nBekijk de gegevens in de regiekamer, zet ze in Stripe en klik daarna op "Verwerkt": /admin`,
   });
 
   return NextResponse.json({ ok: true });

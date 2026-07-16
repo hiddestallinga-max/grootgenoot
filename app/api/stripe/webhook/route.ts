@@ -79,19 +79,14 @@ export async function POST(request: Request) {
           .from("facturen")
           .update({ status: "mislukt" })
           .eq("id", factuurId);
-        // Gefactureerde uren terugzetten zodat een nieuwe poging mogelijk is.
-        const { data: factuur } = await supabaseAdmin
-          .from("facturen")
-          .select("koppeling_id, periode, totaal_cent")
-          .eq("id", factuurId)
-          .single();
-        if (factuur) {
-          await supabaseAdmin
-            .from("uren")
-            .update({ status: "goedgekeurd" })
-            .eq("koppeling_id", factuur.koppeling_id)
-            .eq("status", "gefactureerd");
-        }
+        // Alleen de uren van déze factuur terugzetten, zodat een nieuwe
+        // poging mogelijk is. Uren van eerdere (betaalde) facturen blijven
+        // onaangeroerd; anders zouden die dubbel gefactureerd kunnen worden.
+        await supabaseAdmin
+          .from("uren")
+          .update({ status: "goedgekeurd" })
+          .eq("factuur_id", factuurId)
+          .eq("status", "gefactureerd");
         await stuurMail({
           naar: eigenaarEmail(),
           onderwerp: "Let op: incasso mislukt",

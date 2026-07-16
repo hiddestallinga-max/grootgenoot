@@ -216,6 +216,8 @@ export default function AanmeldForm({ rol }: Props) {
         <input
           id="postcode"
           name="postcode"
+          required
+          autoComplete="postal-code"
           className={inputClass}
           placeholder="1234 AB"
         />

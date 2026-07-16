@@ -15,6 +15,79 @@ function euro(bedrag: number): string {
   });
 }
 
+/**
+ * Slider met grote min/plus-knoppen ernaast. De knoppen zijn er voor mensen
+ * voor wie slepen lastig is (verminderde fijne motoriek); de slider blijft
+ * voor wie snel wil schuiven.
+ */
+function SchuifMetKnoppen({
+  id,
+  label,
+  waarde,
+  weergave,
+  min,
+  max,
+  stap,
+  onChange,
+  toelichting,
+}: {
+  id: string;
+  label: string;
+  waarde: number;
+  weergave: string;
+  min: number;
+  max: number;
+  stap: number;
+  onChange: (v: number) => void;
+  toelichting?: string;
+}) {
+  const zet = (v: number) => onChange(Math.min(max, Math.max(min, v)));
+  const knopClass =
+    "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-support/40 bg-white text-2xl font-bold text-support transition hover:bg-support/5 active:scale-95 disabled:opacity-40";
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-4">
+        <label htmlFor={id} className="text-lg font-semibold text-ink">
+          {label}
+        </label>
+        <span className="text-lg font-bold text-support">{weergave}</span>
+      </div>
+      <div className="mt-2 flex items-center gap-3">
+        <button
+          type="button"
+          aria-label={`${label} verlagen`}
+          disabled={waarde <= min}
+          onClick={() => zet(waarde - stap)}
+          className={knopClass}
+        >
+          −
+        </button>
+        <input
+          id={id}
+          type="range"
+          min={min}
+          max={max}
+          step={stap}
+          value={waarde}
+          onChange={(e) => zet(Number(e.target.value))}
+          className="schuif"
+        />
+        <button
+          type="button"
+          aria-label={`${label} verhogen`}
+          disabled={waarde >= max}
+          onClick={() => zet(waarde + stap)}
+          className={knopClass}
+        >
+          +
+        </button>
+      </div>
+      {toelichting && <p className="mt-1 text-base text-muted">{toelichting}</p>}
+    </div>
+  );
+}
+
 export default function TariefCalculator() {
   const [tarief, setTarief] = useState(30);
   const [uren, setUren] = useState(2);
@@ -29,74 +102,40 @@ export default function TariefCalculator() {
   return (
     <div className="glas p-7">
       <div className="space-y-6">
-        <div>
-          <div className="flex items-baseline justify-between gap-4">
-            <label htmlFor="tarief" className="text-lg font-semibold text-ink">
-              Uurtarief van je grootgenoot
-            </label>
-            <span className="text-lg font-bold text-support">
-              {euro(tarief)}
-            </span>
-          </div>
-          <input
-            id="tarief"
-            type="range"
-            min={25}
-            max={35}
-            step={0.5}
-            value={tarief}
-            onChange={(e) => setTarief(Number(e.target.value))}
-            className="schuif mt-2"
-          />
-          <p className="mt-1 text-base text-muted">
-            De grootgenoot bepaalt dit bedrag in overleg met jou, meestal is
-            dit tussen {euro(25)} en {euro(35)}.
-          </p>
-        </div>
+        <SchuifMetKnoppen
+          id="tarief"
+          label="Uurtarief van je grootgenoot"
+          waarde={tarief}
+          weergave={euro(tarief)}
+          min={25}
+          max={35}
+          stap={0.5}
+          onChange={setTarief}
+          toelichting={`De grootgenoot bepaalt dit bedrag in overleg met jou, meestal is dit tussen ${euro(25)} en ${euro(35)}.`}
+        />
 
-        <div>
-          <div className="flex items-baseline justify-between gap-4">
-            <label htmlFor="uren" className="text-lg font-semibold text-ink">
-              Uren hulp per week
-            </label>
-            <span className="text-lg font-bold text-support">
-              {uren} uur
-            </span>
-          </div>
-          <input
-            id="uren"
-            type="range"
-            min={1}
-            max={20}
-            step={1}
-            value={uren}
-            onChange={(e) => setUren(Number(e.target.value))}
-            className="schuif mt-2"
-          />
-        </div>
+        <SchuifMetKnoppen
+          id="uren"
+          label="Uren hulp per week"
+          waarde={uren}
+          weergave={`${uren} uur`}
+          min={1}
+          max={20}
+          stap={1}
+          onChange={setUren}
+        />
 
-        <div>
-          <div className="flex items-baseline justify-between gap-4">
-            <label htmlFor="km" className="text-lg font-semibold text-ink">
-              Reiskilometers per week
-            </label>
-            <span className="text-lg font-bold text-support">{km} km</span>
-          </div>
-          <input
-            id="km"
-            type="range"
-            min={0}
-            max={50}
-            step={1}
-            value={km}
-            onChange={(e) => setKm(Number(e.target.value))}
-            className="schuif mt-2"
-          />
-          <p className="mt-1 text-base text-muted">
-            Alleen als je grootgenoot voor je reist: {euro(REIS_PER_KM)} per
-            kilometer. Hier rekenen we geen service over.
-          </p>
-        </div>
+        <SchuifMetKnoppen
+          id="km"
+          label="Reiskilometers per week"
+          waarde={km}
+          weergave={`${km} km`}
+          min={0}
+          max={50}
+          stap={1}
+          onChange={setKm}
+          toelichting={`Alleen als je grootgenoot voor je reist: ${euro(REIS_PER_KM)} per kilometer. Hier rekenen we geen service over.`}
+        />
 
         <div className="space-y-1 border-t border-ink/10 pt-4 text-lg">
           <p className="flex items-center justify-between gap-4">

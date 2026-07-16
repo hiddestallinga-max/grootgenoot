@@ -6,7 +6,7 @@ import StickyCTA from "@/components/StickyCTA";
 import { SITE_URL } from "@/lib/site";
 
 const beschrijving =
-  "Grootgenoot koppelt ouderen aan iemand uit de buurt voor hulp en gezelschap, thuis en op pad. Betrouwbaar, met VOG en één vast aanspreekpunt.";
+  "Grootgenoot koppelt ouderen aan iemand uit de buurt voor hulp en gezelschap, thuis en op pad. Zorgvuldig gematcht, met één vast aanspreekpunt.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

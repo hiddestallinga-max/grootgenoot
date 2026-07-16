@@ -1,7 +1,7 @@
 import TerugKnop from "@/components/TerugKnop";
 import GlasKaart from "@/components/GlasKaart";
 
-const titel = "Groot Support | Grootgenoot";
+const titel = "Aanmelden | Grootgenoot";
 const beschrijving =
   "Vind ondersteuning, of word grootgenoot en ondersteun een oudere bij jou in de buurt met hulp en gezelschap.";
 
@@ -18,7 +18,7 @@ export default function GrootSupport() {
       <TerugKnop naar="/" />
 
       <h1 className="text-4xl font-bold leading-tight text-ink sm:text-5xl">
-        Groot Support
+        Aanmelden
       </h1>
       <div className="mt-10 grid gap-6">
         <GlasKaart href="/groot-support/hulp-zoeken" className="p-7">

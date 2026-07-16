@@ -37,6 +37,7 @@ export default async function Uren({
       .from("aanmeldingen")
       .select("voornaam, rol")
       .eq("id", id)
+      .is("verwijderd_op", null)
       .single();
     if (gg?.rol === "grootgenoot") {
       voornaam = gg.voornaam;
@@ -46,7 +47,8 @@ export default async function Uren({
           "id, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(voornaam, achternaam)",
         )
         .eq("grootgenoot_id", id)
-        .eq("actief", true);
+        .eq("actief", true)
+        .is("verwijderd_op", null);
       koppelingen = (data as unknown as KoppelingRij[]) ?? [];
     }
   }

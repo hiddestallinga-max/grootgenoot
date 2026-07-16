@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
+// Koppelingen beheren. "Verwijderen" is een soft delete (prullenbak);
+// "definitief" verwijdert echt. Facturen blijven ook dan bewaard (fiscale
+// bewaarplicht): hun koppeling-verwijzing komt op null te staan.
+
 const schema = z.discriminatedUnion("actie", [
   z.object({
     actie: z.literal("nieuw"),
@@ -10,6 +14,8 @@ const schema = z.discriminatedUnion("actie", [
     uurtarief_cent: z.number().int().min(1000).max(10000),
   }),
   z.object({ actie: z.literal("verwijder"), id: z.string().uuid() }),
+  z.object({ actie: z.literal("herstel"), id: z.string().uuid() }),
+  z.object({ actie: z.literal("definitief"), id: z.string().uuid() }),
 ]);
 
 export async function POST(request: Request) {
@@ -39,15 +45,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  // d.actie === "verwijder"
-  // Uren en facturen van deze koppeling verdwijnen mee (on delete cascade).
+  if (d.actie === "definitief") {
+    // Uren verdwijnen mee (cascade); facturen blijven staan met koppeling null.
+    const { error } = await supabaseAdmin
+      .from("koppelingen")
+      .delete()
+      .eq("id", d.id);
+    if (error) {
+      console.error("Koppeling-verwijderfout:", error.message);
+      return NextResponse.json({ error: "Verwijderen mislukt" }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  const naarPrullenbak = d.actie === "verwijder";
   const { error } = await supabaseAdmin
     .from("koppelingen")
-    .delete()
+    .update({
+      verwijderd_op: naarPrullenbak ? new Date().toISOString() : null,
+      actief: !naarPrullenbak,
+    })
     .eq("id", d.id);
   if (error) {
-    console.error("Koppeling-verwijderfout:", error.message);
-    return NextResponse.json({ error: "Verwijderen mislukt" }, { status: 500 });
+    console.error("Koppeling-prullenbakfout:", error.message);
+    return NextResponse.json({ error: "Opslaan mislukt" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 }

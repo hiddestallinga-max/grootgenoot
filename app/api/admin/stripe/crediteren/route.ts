@@ -64,6 +64,12 @@ export async function POST(request: Request) {
       const refund = await stripe().refunds.create({
         payment_intent: factuur.stripe_payment_intent_id,
         amount: bedrag,
+        // Haal het uitbetaalde deel naar rato terug bij de grootgenoot en
+        // betaal de servicebijdrage naar rato terug. Zonder deze twee opties
+        // zou het volledige refundbedrag uit het platformsaldo komen terwijl
+        // de grootgenoot zijn uitbetaling houdt.
+        reverse_transfer: true,
+        refund_application_fee: true,
       });
       refundId = refund.id;
     } catch (err) {

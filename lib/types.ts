@@ -32,7 +32,7 @@ export const CATEGORIEEN = [
   "Wandelen of een uitje",
   "Koken of samen eten",
   "Boodschappen of vervoer",
-  "Hand- en spandiensten (was, bankieren, IT)",
+  "Hand- en spandiensten (was, administratie, IT)",
   "Samen sporten of bewegen",
   "Helpen onthouden (medicatie, afspraken)",
 ] as const;
@@ -53,4 +53,6 @@ export type Aanmelding = {
   status: Status;
   notitie: string | null;
   created_at: string;
+  // Soft delete: gezet = in de prullenbak (regiekamer), null = actief.
+  verwijderd_op?: string | null;
 };

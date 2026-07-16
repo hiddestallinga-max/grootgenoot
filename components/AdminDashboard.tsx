@@ -63,13 +63,13 @@ export default function AdminDashboard({
 
   async function verwijderAanmelding(a: Aanmelding) {
     const zeker = window.confirm(
-      `${a.voornaam} ${a.achternaam} definitief verwijderen? Ook eventuele koppelingen, uren en factuurhistorie verdwijnen.`,
+      `${a.voornaam} ${a.achternaam} naar de prullenbak verplaatsen? Je kunt de aanmelding daar altijd terugzetten of alsnog definitief verwijderen.`,
     );
     if (!zeker) return;
     const res = await fetch("/api/admin/aanmelding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: a.id }),
+      body: JSON.stringify({ id: a.id, actie: "verwijder" }),
     });
     if (res.ok) {
       setItems((prev) => prev.filter((x) => x.id !== a.id));
@@ -214,7 +214,7 @@ export default function AdminDashboard({
                 </select>
                 <button
                   onClick={() => verwijderAanmelding(a)}
-                  title="Aanmelding definitief verwijderen"
+                  title="Aanmelding naar de prullenbak"
                   className="rounded-full border border-red-700/30 px-3 py-1.5 text-sm font-semibold text-red-700 transition hover:border-red-700"
                 >
                   Verwijder

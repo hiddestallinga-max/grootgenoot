@@ -23,21 +23,7 @@ export default function MijnAanmelding() {
         Ik heb me al aangemeld
       </h1>
 
-      <section aria-labelledby="uren" className="mt-10">
-        <h2 id="uren" className="text-2xl font-bold text-ink">
-          Uren doorgeven
-        </h2>
-        <p className="mt-3 mb-6 text-lg leading-relaxed text-muted">
-          Ben je grootgenoot? Vul je e-mailadres in, dan kun je hier meteen je
-          gewerkte uren doorgeven. Geen link uit je mail nodig. Na controle komen
-          ze op het maandoverzicht en worden ze automatisch uitbetaald.
-        </p>
-        <UrenDirect />
-      </section>
-
-      <hr className="my-12 border-ink/10" />
-
-      <section aria-labelledby="wijzigen">
+      <section aria-labelledby="wijzigen" className="mt-10">
         <h2 id="wijzigen" className="text-2xl font-bold text-ink">
           Aanmelding bekijken of wijzigen
         </h2>
@@ -47,6 +33,20 @@ export default function MijnAanmelding() {
           afmelden. Geen wachtwoord nodig.
         </p>
         <LinkAanvraagForm />
+      </section>
+
+      <hr className="my-12 border-ink/10" />
+
+      <section aria-labelledby="uren">
+        <h2 id="uren" className="text-2xl font-bold text-ink">
+          Uren doorgeven (voor grootgenoten)
+        </h2>
+        <p className="mt-3 mb-6 text-lg leading-relaxed text-muted">
+          Ben je grootgenoot? Vul je e-mailadres in, dan kun je hier meteen je
+          gewerkte uren doorgeven. Geen link uit je mail nodig. Na controle komen
+          ze op het maandoverzicht en worden ze automatisch uitbetaald.
+        </p>
+        <UrenDirect />
       </section>
 
       <hr className="my-12 border-ink/10" />

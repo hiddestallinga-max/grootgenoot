@@ -43,6 +43,7 @@ export async function POST(request: Request) {
     .select("id, voornaam")
     .ilike("email", parsed.data.email)
     .eq("rol", "grootgenoot")
+    .is("verwijderd_op", null)
     .maybeSingle();
 
   if (!gg) {
@@ -55,13 +56,17 @@ export async function POST(request: Request) {
       "id, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(voornaam, achternaam)",
     )
     .eq("grootgenoot_id", gg.id)
-    .eq("actief", true);
+    .eq("actief", true)
+    .is("verwijderd_op", null);
 
   const rijen = (data as unknown as KoppelingRij[]) ?? [];
+  // Bewust alleen voornaam + eerste letter van de achternaam: dit endpoint is
+  // enkel met een e-mailadres te bevragen, dus we tonen zo min mogelijk over
+  // de (kwetsbare) hulpvrager. De grootgenoot herkent de persoon toch wel.
   const koppelingen = rijen.map((k) => ({
     id: k.id,
     naam: k.hulpvrager
-      ? `${k.hulpvrager.voornaam} ${k.hulpvrager.achternaam}`
+      ? `${k.hulpvrager.voornaam} ${k.hulpvrager.achternaam.trim().charAt(0).toUpperCase()}.`
       : "Onbekend",
   }));
 

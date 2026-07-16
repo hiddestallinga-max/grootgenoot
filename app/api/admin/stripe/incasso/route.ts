@@ -1,22 +1,28 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { stripe, isStripeGeconfigureerd, euroTekst } from "@/lib/stripe";
+import { isStripeGeconfigureerd, euroTekst } from "@/lib/stripe";
 import { stuurMail, eigenaarEmail } from "@/lib/email";
 import {
   reiskostenCent,
   REISKOSTEN_CENT_PER_KM,
   SERVICE_CENT_PER_UUR,
+  BTW_PCT_SERVICE,
+  btwOverService,
 } from "@/lib/tarieven";
 import { genereerFactuurPdf, type FactuurSnapshot } from "@/lib/factuurPdf";
+import { incassoVanafDatum, datumTekst, INCASSO_WACHT_DAGEN } from "@/lib/incasso";
 
-// Start de maandincasso voor één koppeling: telt de goedgekeurde uren op,
-// mailt de cliënt het overzicht en maakt één SEPA-incasso aan die Stripe
-// automatisch splitst: het uurdeel naar de grootgenoot (destination),
-// de service naar Grootgenoot (application fee). Het geld van de
-// grootgenoot komt dus nooit op onze rekening.
+// Stap 1 van de maandincasso: de factuur versturen en de afschrijving
+// aankondigen. De klant krijgt de PDF-factuur met een concrete afschrijfdatum
+// (over vijf dagen, SEPA-prenotificatie). De daadwerkelijke afschrijving doet
+// de dagelijkse cron (app/api/cron/incasso) zodra die datum is bereikt.
+// Annuleren kan tot die tijd met actie "annuleer".
 
-const schema = z.object({ koppeling_id: z.string().uuid() });
+const schema = z.discriminatedUnion("actie", [
+  z.object({ actie: z.literal("aankondigen"), koppeling_id: z.string().uuid() }),
+  z.object({ actie: z.literal("annuleer"), factuur_id: z.string().uuid() }),
+]);
 
 type Persoon = {
   id: string;
@@ -31,6 +37,19 @@ type Persoon = {
   btw_id: string | null;
   werkvorm: string | null;
 };
+
+/** "juni 2026" bij één maand, anders "mei t/m juni 2026". */
+function periodeVanUren(datums: string[]): string {
+  const maanden = [...new Set(datums.map((d) => d.slice(0, 7)))].sort();
+  const naam = (ym: string) =>
+    new Date(`${ym}-15`).toLocaleDateString("nl-NL", {
+      month: "long",
+      year: "numeric",
+    });
+  const eerste = maanden[0];
+  const laatste = maanden[maanden.length - 1];
+  return eerste === laatste ? naam(eerste) : `${naam(eerste)} t/m ${naam(laatste)}`;
+}
 
 export async function POST(request: Request) {
   if (!isStripeGeconfigureerd()) {
@@ -51,12 +70,58 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Ongeldige aanvraag" }, { status: 400 });
   }
 
+  // ===== Annuleren van een aangekondigde afschrijving =====
+  if (parsed.data.actie === "annuleer") {
+    const { data: factuur } = await supabaseAdmin
+      .from("facturen")
+      .select(
+        "id, status, periode, totaal_cent, snapshot, koppeling:koppelingen!facturen_koppeling_id_fkey(hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(voornaam, email))",
+      )
+      .eq("id", parsed.data.factuur_id)
+      .single();
+
+    if (!factuur) {
+      return NextResponse.json({ error: "Factuur niet gevonden" }, { status: 404 });
+    }
+    if (factuur.status !== "aangekondigd") {
+      return NextResponse.json(
+        { error: "Alleen een aangekondigde afschrijving kan worden geannuleerd." },
+        { status: 400 },
+      );
+    }
+
+    await supabaseAdmin
+      .from("facturen")
+      .update({ status: "geannuleerd" })
+      .eq("id", factuur.id);
+    await supabaseAdmin
+      .from("uren")
+      .update({ status: "goedgekeurd", factuur_id: null })
+      .eq("factuur_id", factuur.id)
+      .eq("status", "gefactureerd");
+
+    const nummer = (factuur.snapshot as { nummer?: string } | null)?.nummer ?? "";
+    const hv = (factuur.koppeling as unknown as {
+      hulpvrager: { voornaam: string; email: string } | null;
+    } | null)?.hulpvrager;
+    if (hv?.email) {
+      await stuurMail({
+        naar: hv.email,
+        onderwerp: `De aangekondigde afschrijving gaat niet door (factuur ${nummer})`,
+        tekst: `Beste ${hv.voornaam},\n\nDe eerder aangekondigde automatische afschrijving van ${euroTekst(factuur.totaal_cent)} (factuur ${nummer}, ${factuur.periode}) gaat niet door. Er wordt niets van uw rekening afgeschreven.\n\nAls er een gecorrigeerde factuur volgt, ontvangt u die apart per e-mail.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+      });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // ===== Factuur opstellen, mailen en de afschrijving aankondigen =====
   const { data: kop } = await supabaseAdmin
     .from("koppelingen")
     .select(
       "id, uurtarief_cent, actief, hulpvrager:aanmeldingen!koppelingen_hulpvrager_id_fkey(*), grootgenoot:aanmeldingen!koppelingen_grootgenoot_id_fkey(*)",
     )
     .eq("id", parsed.data.koppeling_id)
+    .is("verwijderd_op", null)
     .single();
 
   if (!kop) {
@@ -102,25 +167,10 @@ export async function POST(request: Request) {
   // Reiskostenvergoeding gaat volledig naar de grootgenoot: geen service erover.
   const reisCent = reiskostenCent(totaalKm);
   const totaalCent = urenCent + serviceCent + reisCent;
-  const periode = new Date().toLocaleDateString("nl-NL", {
-    month: "long",
-    year: "numeric",
-  });
+  const periode = periodeVanUren(uren.map((u) => u.datum));
+  const vanaf = incassoVanafDatum();
 
   try {
-    // Opgeslagen SEPA-betaalmethode van de cliënt ophalen.
-    const betaalmethoden = await stripe().paymentMethods.list({
-      customer: hulpvrager.stripe_customer_id,
-      type: "sepa_debit",
-    });
-    const betaalmethode = betaalmethoden.data[0];
-    if (!betaalmethode) {
-      return NextResponse.json(
-        { error: "Geen SEPA-machtiging gevonden bij Stripe." },
-        { status: 400 },
-      );
-    }
-
     const { data: factuur, error: factuurFout } = await supabaseAdmin
       .from("facturen")
       .insert({
@@ -128,7 +178,8 @@ export async function POST(request: Request) {
         periode,
         totaal_cent: totaalCent,
         service_cent: serviceCent,
-        status: "in_behandeling",
+        status: "aangekondigd",
+        incasso_vanaf: vanaf,
       })
       .select("id, nummer")
       .single();
@@ -156,35 +207,23 @@ export async function POST(request: Request) {
       serviceCent,
       reisCent,
       totaalCent,
+      serviceCentPerUur: SERVICE_CENT_PER_UUR,
+      reiskostenCentPerKm: REISKOSTEN_CENT_PER_KM,
+      btwPctService: BTW_PCT_SERVICE,
+      btwCent: btwOverService(serviceCent),
+      incassoVanaf: vanaf,
       grootgenootKvk: grootgenoot.werkvorm === "zzp" ? grootgenoot.kvk ?? null : null,
       grootgenootBtw: grootgenoot.werkvorm === "zzp" ? grootgenoot.btw_id ?? null : null,
     };
     await supabaseAdmin.from("facturen").update({ snapshot }).eq("id", factuur.id);
     const factuurPdf = await genereerFactuurPdf(snapshot);
 
-    const intent = await stripe().paymentIntents.create({
-      amount: totaalCent,
-      currency: "eur",
-      customer: hulpvrager.stripe_customer_id,
-      payment_method: betaalmethode.id,
-      payment_method_types: ["sepa_debit"],
-      off_session: true,
-      confirm: true,
-      application_fee_amount: serviceCent,
-      transfer_data: { destination: grootgenoot.stripe_account_id },
-      description: `Grootgenoot, hulp ${periode}`,
-      metadata: { factuur_id: factuur.id, koppeling_id: kop.id },
-    });
-
-    await supabaseAdmin
-      .from("facturen")
-      .update({ stripe_payment_intent_id: intent.id })
-      .eq("id", factuur.id);
-
+    // Uren vastzetten en aan deze factuur koppelen, zodat een mislukte incasso
+    // later alleen déze uren terugzet (nooit die van eerdere facturen).
     const urenIds = uren.map((u) => u.id);
     await supabaseAdmin
       .from("uren")
-      .update({ status: "gefactureerd" })
+      .update({ status: "gefactureerd", factuur_id: factuur.id })
       .in("id", urenIds);
 
     const regels = uren
@@ -205,27 +244,27 @@ export async function POST(request: Request) {
       stuurMail({
         naar: hulpvrager.email,
         onderwerp: `Uw factuur van Grootgenoot (${periode})`,
-        tekst: `Beste ${hulpvrager.voornaam},\n\nIn de bijlage vindt u uw factuur voor ${periode} (factuurnummer ${nummerWeergave}). Het totaalbedrag is ${euroTekst(totaalCent)}.\n\nDit bedrag wordt binnen enkele dagen automatisch van uw rekening afgeschreven via uw incassomachtiging. Klopt er iets niet? Laat het ons direct weten.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`,
+        tekst: `Beste ${hulpvrager.voornaam},\n\nIn de bijlage vindt u uw factuur voor ${periode} (factuurnummer ${nummerWeergave}). Het totaalbedrag is ${euroTekst(totaalCent)}.\n\nDit bedrag wordt op of kort na ${datumTekst(vanaf)} automatisch van uw rekening afgeschreven via uw incassomachtiging. U hoeft niets te doen.\n\nKlopt er iets niet? Bel of mail ons vóór die datum, dan zetten we de afschrijving stil en zoeken we het samen uit.\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl\n06 12154010`,
         bijlagen: [{ bestandsnaam: `factuur-${nummerWeergave}.pdf`, inhoud: factuurPdf }],
       }),
       stuurMail({
         naar: grootgenoot.email,
-        onderwerp: `Je uitbetaling van Grootgenoot is onderweg (${periode})`,
-        tekst: `Beste ${grootgenoot.voornaam},\n\n${overzicht}\n\nJouw deel (${euroTekst(urenCent + reisCent)}${reisCent > 0 ? `, inclusief ${euroTekst(reisCent)} reiskosten` : ""}) wordt na verwerking door Stripe rechtstreeks op je rekening gestort.\n\nHartelijke groet,\nHidde van Grootgenoot`,
+        onderwerp: `Je uitbetaling van Grootgenoot is aangekondigd (${periode})`,
+        tekst: `Beste ${grootgenoot.voornaam},\n\n${overzicht}\n\nDe klant heeft de factuur ontvangen. Rond ${datumTekst(vanaf)} wordt het bedrag afgeschreven; jouw deel (${euroTekst(urenCent + reisCent)}${reisCent > 0 ? `, inclusief ${euroTekst(reisCent)} reiskosten` : ""}) wordt daarna door Stripe rechtstreeks op je rekening gestort.\n\nHartelijke groet,\nHidde van Grootgenoot`,
       }),
       stuurMail({
         naar: eigenaarEmail(),
-        onderwerp: `Incasso gestart: ${hulpvrager.achternaam} / ${grootgenoot.achternaam} (${euroTekst(totaalCent)})`,
-        tekst: overzicht,
+        onderwerp: `Factuur verstuurd: ${hulpvrager.achternaam} / ${grootgenoot.achternaam} (${euroTekst(totaalCent)})`,
+        tekst: `${overzicht}\n\nDe incasso loopt automatisch vanaf ${datumTekst(vanaf)} (${INCASSO_WACHT_DAGEN} dagen wachttijd). Annuleren kan tot die tijd in de regiekamer.`,
       }),
     ]);
 
-    return NextResponse.json({ ok: true, totaal_cent: totaalCent });
+    return NextResponse.json({ ok: true, totaal_cent: totaalCent, incasso_vanaf: vanaf });
   } catch (err) {
-    console.error("Incasso-fout:", err);
+    console.error("Factuur-fout:", err);
     const boodschap = err instanceof Error ? err.message : "Onbekende fout";
     return NextResponse.json(
-      { error: `Incasso mislukt: ${boodschap}` },
+      { error: `Factuur versturen mislukt: ${boodschap}` },
       { status: 500 },
     );
   }

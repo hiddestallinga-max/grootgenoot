@@ -10,7 +10,12 @@ export const aanmeldingSchema = z
     achternaam: z.string().trim().min(1, "Vul je achternaam in").max(100),
     email: z.string().trim().email("Vul een geldig e-mailadres in").max(200),
     telefoon: z.string().trim().max(30).optional().or(z.literal("")),
-    postcode: z.string().trim().max(10).optional().or(z.literal("")),
+    // Verplicht: de postcode is ons enige gegeven om iemand dichtbij te vinden.
+    postcode: z
+      .string()
+      .trim()
+      .min(4, "Vul je postcode in, dan zoeken we iemand dichtbij")
+      .max(10),
     categorieen: z
       .array(z.string())
       .default([])
@@ -37,7 +42,7 @@ export const aanmeldingSchema = z
     return {
       ...d,
       telefoon: d.telefoon || null,
-      postcode: d.postcode || null,
+      postcode: d.postcode,
       beschikbaarheid: d.beschikbaarheid || null,
       toelichting: d.toelichting || null,
       urgentie: d.rol === "hulpvrager" ? (d.urgentie ?? null) : null,

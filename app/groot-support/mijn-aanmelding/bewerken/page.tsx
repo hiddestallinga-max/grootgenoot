@@ -34,6 +34,7 @@ export default async function Bewerken({
       .from("aanmeldingen")
       .select("*")
       .eq("id", id)
+      .is("verwijderd_op", null)
       .single();
     aanmelding = (data as Aanmelding | null) ?? null;
   }

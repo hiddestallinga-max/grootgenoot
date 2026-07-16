@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SERVICE_CENT_PER_UUR } from "@/lib/tarieven";
+import { SERVICE_CENT_PER_UUR, REISKOSTEN_CENT_PER_KM } from "@/lib/tarieven";
 
 export type UrenRij = {
   id: string;
@@ -31,6 +31,7 @@ export type FactuurView = {
   totaalCent: number;
   status: string;
   gecrediteerd: boolean;
+  incassoVanaf: string | null;
   creditnotas: { id: string; nummer: string; bedragCent: number }[];
 };
 
@@ -41,14 +42,35 @@ function euro(cent: number): string {
   });
 }
 
+function factuurStatusTekst(f: FactuurView): string {
+  switch (f.status) {
+    case "aangekondigd":
+      return f.incassoVanaf
+        ? `afschrijving vanaf ${new Date(f.incassoVanaf).toLocaleDateString("nl-NL")}`
+        : "aangekondigd";
+    case "in_behandeling":
+      return "wordt afgeschreven";
+    case "betaald":
+      return "betaald";
+    case "mislukt":
+      return "mislukt";
+    case "geannuleerd":
+      return "geannuleerd";
+    default:
+      return f.status;
+  }
+}
+
 export default function KoppelingenBeheer({
   koppelingen,
   facturen,
+  losseFacturen = [],
   hulpvragers,
   grootgenoten,
 }: {
   koppelingen: KoppelingView[];
   facturen: Record<string, FactuurView[]>;
+  losseFacturen?: FactuurView[];
   hulpvragers: Kandidaat[];
   grootgenoten: Kandidaat[];
 }) {
@@ -89,6 +111,18 @@ export default function KoppelingenBeheer({
       "/api/admin/stripe/crediteren",
       { factuur_id: factuur.id, reden },
       `credit-${factuur.id}`,
+    );
+  }
+
+  async function annuleer(factuur: FactuurView) {
+    const zeker = window.confirm(
+      `De aangekondigde afschrijving van factuur ${factuur.nummer} (${euro(factuur.totaalCent)}) annuleren?\n\nDe klant krijgt een mail dat er niets wordt afgeschreven en de uren komen weer op 'goedgekeurd' te staan.`,
+    );
+    if (!zeker) return;
+    await roep(
+      "/api/admin/stripe/incasso",
+      { actie: "annuleer", factuur_id: factuur.id },
+      `annuleer-${factuur.id}`,
     );
   }
 
@@ -190,7 +224,7 @@ export default function KoppelingenBeheer({
           const goedKm = goedgekeurd.reduce((s, u) => s + Number(u.km ?? 0), 0);
           const urenCent = Math.round((goedMinuten / 60) * k.uurtarief_cent);
           const serviceCent = Math.round((goedMinuten / 60) * SERVICE_CENT_PER_UUR);
-          const reisCent = Math.round(goedKm * 23);
+          const reisCent = Math.round(goedKm * REISKOSTEN_CENT_PER_KM);
           const klaarVoorIncasso =
             goedgekeurd.length > 0 &&
             k.grootgenoot.onboarded &&
@@ -214,7 +248,7 @@ export default function KoppelingenBeheer({
                     onClick={() => {
                       if (
                         window.confirm(
-                          "Koppeling verwijderen? De bijbehorende uren en factuurhistorie verdwijnen ook.",
+                          "Koppeling naar de prullenbak verplaatsen? Je kunt haar daar altijd terugzetten.",
                         )
                       ) {
                         roep(
@@ -354,18 +388,18 @@ export default function KoppelingenBeheer({
                     disabled={bezig !== null || !klaarVoorIncasso}
                     title={
                       klaarVoorIncasso
-                        ? ""
+                        ? "De klant krijgt de factuur nu per mail; de afschrijving volgt automatisch na 5 dagen"
                         : "Eerst moeten de betaallink en de machtiging geregeld zijn"
                     }
                     onClick={() =>
                       roep(
                         "/api/admin/stripe/incasso",
-                        { koppeling_id: k.id },
+                        { actie: "aankondigen", koppeling_id: k.id },
                         "incasso",
                       )
                     }
                   >
-                    {bezig === "incasso" ? "Bezig…" : "Start incasso"}
+                    {bezig === "incasso" ? "Bezig…" : "Factuur versturen"}
                   </button>
                 </div>
               )}
@@ -375,43 +409,13 @@ export default function KoppelingenBeheer({
                   <h4 className="text-base font-bold text-ink">Facturen</h4>
                   <ul className="mt-2 space-y-2">
                     {(facturen[k.id] ?? []).map((f) => (
-                      <li
+                      <FactuurRegelItem
                         key={f.id}
-                        className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/60 px-4 py-3 text-base"
-                      >
-                        <span className="text-ink">
-                          {f.nummer} · {f.periode} · {euro(f.totaalCent)}
-                          {f.gecrediteerd && (
-                            <span className="ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-sm font-semibold text-muted">
-                              gecrediteerd
-                            </span>
-                          )}
-                          {f.creditnotas.map((c) => (
-                            <span key={c.id} className="ml-2 text-sm text-muted">
-                              {c.nummer}: -{euro(c.bedragCent)}
-                            </span>
-                          ))}
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <a
-                            href={`/api/admin/factuur/pdf?id=${f.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="rounded-lg border border-support px-3 py-1.5 text-sm font-semibold text-support transition hover:bg-support/5"
-                          >
-                            PDF
-                          </a>
-                          {!f.gecrediteerd && (
-                            <button
-                              className="rounded-lg border border-red-300 px-3 py-1.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50"
-                              disabled={bezig !== null}
-                              onClick={() => crediteer(f)}
-                            >
-                              {bezig === `credit-${f.id}` ? "Bezig…" : "Corrigeren"}
-                            </button>
-                          )}
-                        </span>
-                      </li>
+                        f={f}
+                        bezig={bezig}
+                        onCrediteer={crediteer}
+                        onAnnuleer={annuleer}
+                      />
                     ))}
                   </ul>
                 </div>
@@ -420,6 +424,100 @@ export default function KoppelingenBeheer({
           );
         })}
       </div>
+
+      {losseFacturen.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-bold text-ink">
+            Facturen zonder actieve koppeling
+          </h3>
+          <p className="text-sm text-muted">
+            De koppeling is verwijderd of staat in de prullenbak; deze facturen
+            blijven bewaard voor de administratie (bewaarplicht 7 jaar).
+          </p>
+          <ul className="mt-2 space-y-2">
+            {losseFacturen.map((f) => (
+              <FactuurRegelItem
+                key={f.id}
+                f={f}
+                bezig={bezig}
+                onCrediteer={crediteer}
+                onAnnuleer={annuleer}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
+  );
+}
+
+function FactuurRegelItem({
+  f,
+  bezig,
+  onCrediteer,
+  onAnnuleer,
+}: {
+  f: FactuurView;
+  bezig: string | null;
+  onCrediteer: (f: FactuurView) => void;
+  onAnnuleer: (f: FactuurView) => void;
+}) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-white/60 px-4 py-3 text-base">
+      <span className="text-ink">
+        {f.nummer} · {f.periode} · {euro(f.totaalCent)}
+        <span
+          className={`ml-2 rounded-full px-2 py-0.5 text-sm font-semibold ${
+            f.status === "betaald"
+              ? "bg-green-100 text-green-800"
+              : f.status === "mislukt"
+                ? "bg-red-100 text-red-800"
+                : f.status === "geannuleerd"
+                  ? "bg-ink/5 text-muted"
+                  : "bg-amber-100 text-amber-800"
+          }`}
+        >
+          {factuurStatusTekst(f)}
+        </span>
+        {f.gecrediteerd && (
+          <span className="ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-sm font-semibold text-muted">
+            gecrediteerd
+          </span>
+        )}
+        {f.creditnotas.map((c) => (
+          <span key={c.id} className="ml-2 text-sm text-muted">
+            {c.nummer}: -{euro(c.bedragCent)}
+          </span>
+        ))}
+      </span>
+      <span className="flex items-center gap-2">
+        <a
+          href={`/api/admin/factuur/pdf?id=${f.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-lg border border-support px-3 py-1.5 text-sm font-semibold text-support transition hover:bg-support/5"
+        >
+          PDF
+        </a>
+        {f.status === "aangekondigd" && (
+          <button
+            className="rounded-lg border border-amber-400 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-50 disabled:opacity-50"
+            disabled={bezig !== null}
+            onClick={() => onAnnuleer(f)}
+          >
+            {bezig === `annuleer-${f.id}` ? "Bezig…" : "Annuleer afschrijving"}
+          </button>
+        )}
+        {!f.gecrediteerd && f.status !== "aangekondigd" && f.status !== "geannuleerd" && (
+          <button
+            className="rounded-lg border border-red-300 px-3 py-1.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50"
+            disabled={bezig !== null}
+            onClick={() => onCrediteer(f)}
+          >
+            {bezig === `credit-${f.id}` ? "Bezig…" : "Corrigeren"}
+          </button>
+        )}
+      </span>
+    </li>
   );
 }

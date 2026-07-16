@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/over",
     "/tarieven",
     "/werkgebied",
+    "/voor-familie",
     "/contact",
     "/privacy",
     "/groot-support",

@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { aanmeldingSchema } from "@/lib/validatie";
 import { isToegestaan, ipVan } from "@/lib/rateLimit";
 import { stuurMail, eigenaarEmail } from "@/lib/email";
+import { procedureStappen, MANTELZORGER_TIP } from "@/lib/procedure";
 
 export async function POST(request: Request) {
   // Maximaal 5 aanmeldingen per 10 minuten per IP tegen spam-scripts.
@@ -60,16 +61,17 @@ export async function POST(request: Request) {
   const d = parsed.data;
   const rolLabel = d.rol === "hulpvrager" ? "zoekt ondersteuning" : "wil grootgenoot worden";
 
-  const stappen = [
-    "1. We bellen je eerst om je vraag rustig door te spreken.",
-    "2. Zodra er een passende match is, plannen we een gratis en vrijblijvend kennismakingsgesprek.",
-  ];
-  if (d.rol === "hulpvrager") {
-    stappen.push(
-      "Fijn om te weten: als het relevant is, is het prettig als er een mantelzorger bij het kennismakingsgesprek aanwezig is. Die kan meehelpen bij het regelen van de administratie.",
-    );
-  }
-  const welkomTekst = `Beste ${d.voornaam},\n\nBedankt voor je aanmelding bij Grootgenoot. We hebben je gegevens goed ontvangen.\n\nZo gaat het nu verder:\n\n${stappen.join("\n\n")}\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl`;
+  // Hulpvragers spreken we in mails met "u" aan, grootgenoten met "je".
+  const vorm = d.rol === "hulpvrager" ? ("u" as const) : ("je" as const);
+  const stappen = procedureStappen(vorm).map(
+    (s, i) => `${i + 1}. ${s.titel} ${s.tekst}`,
+  );
+  if (d.rol === "hulpvrager") stappen.push(MANTELZORGER_TIP);
+
+  const welkomTekst =
+    d.rol === "hulpvrager"
+      ? `Beste ${d.voornaam},\n\nBedankt voor uw aanmelding bij Grootgenoot. We hebben uw gegevens goed ontvangen.\n\nZo gaat het nu verder:\n\n${stappen.join("\n\n")}\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl\n06 12154010`
+      : `Beste ${d.voornaam},\n\nBedankt voor je aanmelding bij Grootgenoot. We hebben je gegevens goed ontvangen.\n\nZo gaat het nu verder:\n\n${stappen.join("\n\n")}\n\nHartelijke groet,\nHidde van Grootgenoot\ninfo@grootgenoot.nl\n06 12154010`;
   await Promise.allSettled([
     stuurMail({
       naar: eigenaarEmail(),

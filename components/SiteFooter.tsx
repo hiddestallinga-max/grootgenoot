@@ -4,6 +4,17 @@ export default function SiteFooter() {
   return (
     <footer className="mt-16 bg-ink text-white/80">
       <div className="mx-auto max-w-5xl px-6 py-8">
+        <p className="mb-4 flex flex-wrap gap-x-6 gap-y-1 text-base">
+          <a href="tel:+31612154010" className="font-semibold underline hover:text-white">
+            Bel 06 12154010
+          </a>
+          <a
+            href="mailto:info@grootgenoot.nl"
+            className="font-semibold underline hover:text-white"
+          >
+            info@grootgenoot.nl
+          </a>
+        </p>
         <nav className="flex flex-wrap gap-x-6 gap-y-1 text-base">
           <Link href="/over" className="underline hover:text-white">
             Over Grootgenoot
@@ -13,6 +24,9 @@ export default function SiteFooter() {
           </Link>
           <Link href="/werkgebied" className="underline hover:text-white">
             Werkgebied
+          </Link>
+          <Link href="/voor-familie" className="underline hover:text-white">
+            Voor familie
           </Link>
           <Link href="/contact" className="underline hover:text-white">
             Contact

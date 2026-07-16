@@ -21,7 +21,7 @@ export async function generateMetadata({
   if (!p) return {};
 
   const titel = `Hulp en gezelschap in ${p.naam} | Grootgenoot`;
-  const beschrijving = `Hulp en gezelschap voor ouderen in ${p.naam} en omgeving, door iemand uit de buurt. Betrouwbaar, met VOG en één vast aanspreekpunt.`;
+  const beschrijving = `Hulp en gezelschap voor ouderen in ${p.naam} en omgeving, door iemand uit de buurt. Zorgvuldig gematcht, met één vast aanspreekpunt.`;
   return {
     title: titel,
     description: beschrijving,
